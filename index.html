@@ -130,6 +130,60 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .rating{grid-template-columns:repeat(6,1fr)}
   .nav button{flex:1}.hero{padding:22px}
 }
+
+@media (max-width:600px){ header{position:static!important} .keep-open{font-size:12.5px;padding:6px 10px} }
+@media (max-height:500px){ header{position:static!important} }
+/* ---- Answer boxes: robust on every browser and text size ---- */
+.choice{position:relative;display:block}
+.choice input{position:absolute;top:0;left:0;width:1px;height:1px;margin:0;padding:0;border:0;opacity:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;pointer-events:none;-webkit-appearance:none;appearance:none}
+.choice span{display:block;overflow-wrap:break-word;word-wrap:break-word}
+.choice-grid .choice span{position:relative;padding-right:34px}
+.choice-grid .choice input:checked+span::after{content:"\2713";position:absolute;right:12px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);font-weight:800;color:var(--teal-dark)}
+.freq-row .choice span,.rating .choice span{padding-right:4px}
+.freq-row .choice input:checked+span::after,.rating .choice input:checked+span::after{content:none}
+.consent-list .choice span,body.big-text .consent-list .choice span{position:relative;padding-left:48px;padding-right:14px}
+.consent-list .choice span::before{left:14px;top:13px}
+.consent-list .choice input:checked+span::after{left:20px;top:16px}
+body.big-text .consent-list .choice span::before{top:16px;width:20px;height:20px}
+body.big-text .consent-list .choice input:checked+span::after{top:19px;left:21px}
+@media (forced-colors: active){
+  .choice input:checked+span{outline:3px solid Highlight;outline-offset:-3px}
+  .consent-list .choice span::before{forced-color-adjust:none;border-color:CanvasText;background:Canvas}
+  .consent-list .choice input:checked+span::before{background:Highlight}
+}
+
+/* ---- Easier reading on phones ---- */
+.load-box input[type=file]{max-width:100%}
+@media (max-width:380px){ .mini{font-size:14px;padding:8px 10px} .head-actions{flex-wrap:wrap;gap:6px;min-width:0} .header-inner{min-width:0} }
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (max-width:600px){
+  body{font-size:18px;line-height:1.6}
+  h1{font-size:27px}h2{font-size:23px}h3{font-size:20px}
+  p.lead{font-size:19px;line-height:1.5}
+  label.question{font-size:19px;line-height:1.4;margin-bottom:11px}
+  .choice span{font-size:17.5px;line-height:1.45;padding-top:14px;padding-bottom:14px}
+  .choice-grid{gap:10px}
+  .rating .choice span,.freq .choice span{font-size:17px;padding-top:12px;padding-bottom:12px}
+  .small,.save-note,.load-box input[type=file]{font-size:15.5px}
+  .scale-labels{font-size:15px;gap:12px}
+  .error{font-size:16px}
+  .notice,.warning,.info-box,.big-warning,.send-status,.resume-box{font-size:17px;line-height:1.55}
+  .role-t{font-size:19px}.role-d{font-size:16px}
+  button{font-size:17px}.mini{font-size:15px;padding:9px 12px}
+  .send-big{font-size:19px}
+  input,textarea,select{font-size:17px}
+  .progress-label{font-size:15px}
+  .keep-open{font-size:15px}
+  .other-ways>summary{font-size:16px}
+  .chip{font-size:15px}
+  .summary{font-size:15.5px}
+  footer {font-size:14px}
+  body.big-text{font-size:20px}
+  body.big-text label.question{font-size:21px}
+  body.big-text p.lead{font-size:21px}
+  body.big-text .choice span{font-size:20px;padding-top:15px;padding-bottom:15px}
+}
+@media (max-width:380px){ .mini{font-size:14px;padding:8px 10px} }
 </style>
 <style>
 .report-dashboard{margin:20px 0;padding:18px;background:#f7fafb;border:1px solid #d8e3ea;border-radius:15px}
@@ -481,1040 +535,979 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <footer><div class="fbar"></div>© <span id="yr">2026</span> Positive Outcomes Psychology Services Ltd (POPS UK). All rights reserved.<br>This questionnaire and its content may not be copied, reproduced, adapted or distributed without written permission. · popsUKoffice@gmail.com</footer>
 
 <script>
-/* POPS "My School Voice" questionnaire (EBSNA – young person's views)
-   Version 3: strengths, consent gate and explanatory formulation report
-*/
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var _a, _b, _c, _d, _e, _f, _g, _h, _i;
 const STORAGE_KEY = "popsEbsna_v2";
 let ROLE = null, PARENT = false;
-function skey(r){ return STORAGE_KEY + "_" + (r||ROLE||"none"); }
+function skey(r) {
+  return STORAGE_KEY + "_" + (r || ROLE || "none");
+}
 const pages = [...document.querySelectorAll(".page")];
 const total = pages.length - 1;
 let current = 0;
 let answers = {};
-
-/* answers are loaded when the respondent chooses who they are */
-try { answers = {}; }
-catch(e) { answers = {}; }
-
-function esc(s){
-  return String(s ?? "")
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+try {
+  answers = {};
+} catch (e) {
+  answers = {};
 }
-
-function getCheckboxGroups(){
+function esc(s) {
+  return String(s != null ? s : "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+function getCheckboxGroups() {
   const groups = {};
-  document.querySelectorAll('input[type="checkbox"][data-group]').forEach(el=>{
+  document.querySelectorAll('input[type="checkbox"][data-group]').forEach((el) => {
     const g = el.dataset.group;
-    if(!groups[g]) groups[g] = [];
-    if(el.checked) groups[g].push(el.value);
+    if (!groups[g]) groups[g] = [];
+    if (el.checked) groups[g].push(el.value);
   });
   return groups;
 }
-
-function collectAnswers(){
-  const state = {...answers};
-
-  document.querySelectorAll("[data-key]").forEach(el=>{
+function collectAnswers() {
+  const state = __spreadValues({}, answers);
+  document.querySelectorAll("[data-key]").forEach((el) => {
     const key = el.dataset.key;
-    if(!key) return;
-    if(el.type === "radio"){
-      if(el.checked) state[key] = el.value;
-    } else if(el.type === "checkbox"){
+    if (!key) return;
+    if (el.type === "radio") {
+      if (el.checked) state[key] = el.value;
+    } else if (el.type === "checkbox") {
       state[key] = el.checked ? "Yes" : "No";
     } else {
       state[key] = el.value;
     }
   });
-
   Object.assign(state, getCheckboxGroups());
   answers = state;
-  if(ROLE){ answers.role = ROLE; try { localStorage.setItem(skey(), JSON.stringify(answers)); } catch(e) {} }
+  if (ROLE) {
+    answers.role = ROLE;
+    try {
+      localStorage.setItem(skey(), JSON.stringify(answers));
+    } catch (e) {
+    }
+  }
   const note = document.getElementById("saveNote");
-  if(note) note.textContent = "✓ Saved";
+  if (note) note.textContent = "\u2713 Saved";
   return answers;
 }
-
-function restoreAnswers(){
-  document.querySelectorAll("[data-key]").forEach(el=>{
+function restoreAnswers() {
+  document.querySelectorAll("[data-key]").forEach((el) => {
     const key = el.dataset.key;
     const value = answers[key];
-    if(value === undefined) return;
-    if(el.type === "radio") el.checked = (el.value === value);
-    else if(el.type === "checkbox") el.checked = (value === "Yes");
+    if (value === void 0) return;
+    if (el.type === "radio") el.checked = el.value === value;
+    else if (el.type === "checkbox") el.checked = value === "Yes";
     else el.value = value;
   });
-
-  document.querySelectorAll('input[type="checkbox"][data-group]').forEach(el=>{
+  document.querySelectorAll('input[type="checkbox"][data-group]').forEach((el) => {
     const vals = Array.isArray(answers[el.dataset.group]) ? answers[el.dataset.group] : [];
     el.checked = vals.includes(el.value);
   });
 }
-
-function selected(group){
-  return [...document.querySelectorAll(`input[type="checkbox"][data-group="${CSS.escape(group)}"]:checked`)]
-    .map(x=>x.value);
+function selected(group) {
+  return [...document.querySelectorAll('input[type="checkbox"][data-group="'.concat(CSS.escape(group), '"]:checked'))].map((x) => x.value);
 }
-
-function updateProgress(){
-  const pct = current === 0 ? 0 : Math.round((current / total) * 100);
+function updateProgress() {
+  var _a2;
+  const pct = current === 0 ? 0 : Math.round(current / total * 100);
   document.getElementById("bar").style.width = pct + "%";
   document.getElementById("percent").textContent = pct + "%";
-  document.getElementById("sectionLabel").textContent =
-    current === 0 ? "Getting started" :
-    current === 1 ? "Permission" :
-    current === 2 ? "Welcome" :
-    current === total ? "Finished" :
-    (pages[current].querySelector("h2")?.textContent || "Questionnaire");
+  document.getElementById("sectionLabel").textContent = current === 0 ? "Getting started" : current === 1 ? "Permission" : current === 2 ? "Welcome" : current === total ? "Finished" : ((_a2 = pages[current].querySelector("h2")) == null ? void 0 : _a2.textContent) || "Questionnaire";
 }
-
-function consentGiven(){
-  return [...document.querySelectorAll(".consent")].every(c=>c.checked) && validEmail(document.getElementById("gateEmail").value);
+function consentGiven() {
+  return [...document.querySelectorAll(".consent")].every((c) => c.checked) && validEmail(document.getElementById("gateEmail").value);
 }
-function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v||"").trim()); }
-
-function roleHidden(i){
-  const p = pages[i]; if(!p) return false;
-  return (p.classList.contains("parent-only") && !PARENT) || (p.classList.contains("yp-only") && PARENT);
+function validEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v || "").trim());
 }
-function step(from, dir){
+function roleHidden(i) {
+  const p = pages[i];
+  if (!p) return false;
+  return p.classList.contains("parent-only") && !PARENT || p.classList.contains("yp-only") && PARENT;
+}
+function step(from, dir) {
   let i = from + dir;
-  while(i > 0 && i < total && roleHidden(i)) i += dir;
+  while (i > 0 && i < total && roleHidden(i)) i += dir;
   return Math.max(0, Math.min(total, i));
 }
-function showPage(n){
-  if(n > 0 && !ROLE) n = 0;
-  else if(n > 1 && !consentGiven()) n = 1;
-  if(roleHidden(n)) n = step(n, 1);
+function showPage(n) {
+  if (n > 0 && !ROLE) n = 0;
+  else if (n > 1 && !consentGiven()) n = 1;
+  if (roleHidden(n)) n = step(n, 1);
   current = Math.max(0, Math.min(total, n));
-  pages.forEach((p,i)=>p.classList.toggle("hidden", i !== current));
+  pages.forEach((p, i) => p.classList.toggle("hidden", i !== current));
   updateProgress();
-  if(current > 1 && typeof saveProgress === "function") saveProgress();
-  if(current === total) renderReport();
-  window.scrollTo({top:0, behavior:"smooth"});
+  if (current > 1 && typeof saveProgress === "function") saveProgress();
+  if (current === total) renderReport();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
-function maxThree(group, errorId){
-  const boxes = [...document.querySelectorAll(`input[data-group="${CSS.escape(group)}"]`)];
-  boxes.forEach(box=>{
-    box.addEventListener("change", ()=>{
-      const checked = boxes.filter(x=>x.checked);
-      if(checked.length > 3){
+function maxThree(group, errorId) {
+  const boxes = [...document.querySelectorAll('input[data-group="'.concat(CSS.escape(group), '"]'))];
+  boxes.forEach((box) => {
+    box.addEventListener("change", () => {
+      const checked = boxes.filter((x) => x.checked);
+      if (checked.length > 3) {
         box.checked = false;
         const err = document.getElementById(errorId);
-        if(err) {
+        if (err) {
           err.classList.remove("hidden");
-          setTimeout(()=>err.classList.add("hidden"), 2200);
+          setTimeout(() => err.classList.add("hidden"), 2200);
         }
       }
       collectAnswers();
     });
   });
 }
-
-/* ---------- FORMULATION ENGINE ---------- */
-
 const domains = {
   "Social-evaluative threat": {
-    colourClass:"social",
-    groups:["socialFactors","socialThoughts","hideFactors","peerEvents","peopleDifficult"],
-    triggers:{
-      "socialFactors":["Being watched","Being listened to","Speaking in front of people","Reading aloud","Giving a presentation","Being called on unexpectedly","Working in a group","Working with another pupil","Making conversation","Starting a conversation","Joining a group","Finding someone to sit with","Being around particular people"],
-      "socialThoughts":["They will laugh at me","They will judge me","They will stare at me","They will talk about me","They will leave me out","They will reject me","I will embarrass myself","I am weird","I am different","I am stupid","I will say something wrong","I will do something wrong"],
-      "hideFactors":["Anxiety","Feeling different","Not knowing what to say","Wanting to leave"],
-      "peerEvents":["Someone has laughed at me","Someone has called me names","Someone has copied/mocked me","Someone has deliberately excluded me","Someone has threatened me","Someone has hurt me","Someone has deliberately embarrassed me","Someone has made me frightened","People have spread rumours"],
-      "peopleDifficult":["I am frightened of them","They have hurt me","They make comments","They stare at me","They laugh at me","They exclude me"]
+    colourClass: "social",
+    groups: ["socialFactors", "socialThoughts", "hideFactors", "peerEvents", "peopleDifficult"],
+    triggers: {
+      "socialFactors": ["Being watched", "Being listened to", "Speaking in front of people", "Reading aloud", "Giving a presentation", "Being called on unexpectedly", "Working in a group", "Working with another pupil", "Making conversation", "Starting a conversation", "Joining a group", "Finding someone to sit with", "Being around particular people"],
+      "socialThoughts": ["They will laugh at me", "They will judge me", "They will stare at me", "They will talk about me", "They will leave me out", "They will reject me", "I will embarrass myself", "I am weird", "I am different", "I am stupid", "I will say something wrong", "I will do something wrong"],
+      "hideFactors": ["Anxiety", "Feeling different", "Not knowing what to say", "Wanting to leave"],
+      "peerEvents": ["Someone has laughed at me", "Someone has called me names", "Someone has copied/mocked me", "Someone has deliberately excluded me", "Someone has threatened me", "Someone has hurt me", "Someone has deliberately embarrassed me", "Someone has made me frightened", "People have spread rumours"],
+      "peopleDifficult": ["I am frightened of them", "They have hurt me", "They make comments", "They stare at me", "They laugh at me", "They exclude me"]
     }
   },
   "Academic / performance threat": {
-    colourClass:"academic",
-    groups:["lessonFactors","dontUnderstand","workWorries","worryFactors"],
-    triggers:{
-      "lessonFactors":["Not understanding","Working independently","Starting the work","Finishing the work","Working quickly","Remembering instructions","Asking for help","Teacher asking me a question","Being asked to answer immediately","Giving the wrong answer","Other pupils hearing my answer","Reading aloud","Writing","Maths","Tests","Exams","Homework","Presentations","Group work","Being given too much work","Unclear instructions","Getting things wrong"],
-      "dontUnderstand":["Pretend I understand","Stop working","Become distracted","Become anxious","Become angry","Shut down","Leave the room","I do not know what to do"],
-      "workWorries":["I will get it wrong","People will notice","People will laugh","Teacher will think I am stupid","Teacher will think I am lazy","I will get into trouble","I will fall behind","I will have to stay longer","I will have to explain myself","I will feel like giving up"],
-      "worryFactors":["Getting something wrong","Being asked a question","Being unable to answer","Falling behind","Not understanding the work","Being told off","Getting into trouble"]
+    colourClass: "academic",
+    groups: ["lessonFactors", "dontUnderstand", "workWorries", "worryFactors"],
+    triggers: {
+      "lessonFactors": ["Not understanding", "Working independently", "Starting the work", "Finishing the work", "Working quickly", "Remembering instructions", "Asking for help", "Teacher asking me a question", "Being asked to answer immediately", "Giving the wrong answer", "Other pupils hearing my answer", "Reading aloud", "Writing", "Maths", "Tests", "Exams", "Homework", "Presentations", "Group work", "Being given too much work", "Unclear instructions", "Getting things wrong"],
+      "dontUnderstand": ["Pretend I understand", "Stop working", "Become distracted", "Become anxious", "Become angry", "Shut down", "Leave the room", "I do not know what to do"],
+      "workWorries": ["I will get it wrong", "People will notice", "People will laugh", "Teacher will think I am stupid", "Teacher will think I am lazy", "I will get into trouble", "I will fall behind", "I will have to stay longer", "I will have to explain myself", "I will feel like giving up"],
+      "worryFactors": ["Getting something wrong", "Being asked a question", "Being unable to answer", "Falling behind", "Not understanding the work", "Being told off", "Getting into trouble"]
     }
   },
   "Sensory / environmental load": {
-    colourClass:"sensory",
-    groups:["sensoryFactors","overloadResponses","arrivalFactors","morningFactors"],
-    triggers:{
-      "sensoryFactors":["Loud voices","Shouting","Bells","Echoes","Crowds","People moving around","People bumping into me","Bright lights","Flickering lights","Smells","Food smells","Uniform","Temperature","Touch","Dining hall","Corridors","PE changing rooms","Assembly","Visual clutter"],
-      "overloadResponses":["I cannot think","I cannot speak","I cannot answer questions","I need to get away","I need silence","I hide","I shut down","I become very tired","I feel physically ill","I feel numb","I feel disconnected"],
-      "arrivalFactors":["Seeing lots of people","Crowded corridors","Noise","Walking through reception"],
-      "morningFactors":["Getting dressed","Wearing my uniform","Travelling to school","Seeing other pupils"]
+    colourClass: "sensory",
+    groups: ["sensoryFactors", "overloadResponses", "arrivalFactors", "morningFactors"],
+    triggers: {
+      "sensoryFactors": ["Loud voices", "Shouting", "Bells", "Echoes", "Crowds", "People moving around", "People bumping into me", "Bright lights", "Flickering lights", "Smells", "Food smells", "Uniform", "Temperature", "Touch", "Dining hall", "Corridors", "PE changing rooms", "Assembly", "Visual clutter"],
+      "overloadResponses": ["I cannot think", "I cannot speak", "I cannot answer questions", "I need to get away", "I need silence", "I hide", "I shut down", "I become very tired", "I feel physically ill", "I feel numb", "I feel disconnected"],
+      "arrivalFactors": ["Seeing lots of people", "Crowded corridors", "Noise", "Walking through reception"],
+      "morningFactors": ["Getting dressed", "Wearing my uniform", "Travelling to school", "Seeing other pupils"]
     }
   },
   "Uncertainty / predictability": {
-    colourClass:"uncertainty",
-    groups:["changeFactors","prepareHelp","arrivalFactors","worryFactors"],
-    triggers:{
-      "changeFactors":["A different teacher","A supply teacher","A different classroom","A timetable change","A lesson being cancelled","A lesson being moved","A change of seating","A different route around school","Someone unfamiliar in the room","Unexpected visitors","Being asked to do something unexpectedly","Not knowing what will happen next","Being late","Having to wait","Finishing later than expected","Someone changing their mind","Changes at short notice"],
-      "prepareHelp":["Visual timetable","Written timetable","Knowing who will be there","Knowing where I will sit","Knowing what work I will do","Knowing when the lesson will finish","Warning about changes","Being able to ask questions beforehand","Seeing the room beforehand","Having someone explain what will happen"],
-      "arrivalFactors":["Not knowing what will happen","Being late"],
-      "worryFactors":["Something I cannot predict"]
+    colourClass: "uncertainty",
+    groups: ["changeFactors", "prepareHelp", "arrivalFactors", "worryFactors"],
+    triggers: {
+      "changeFactors": ["A different teacher", "A supply teacher", "A different classroom", "A timetable change", "A lesson being cancelled", "A lesson being moved", "A change of seating", "A different route around school", "Someone unfamiliar in the room", "Unexpected visitors", "Being asked to do something unexpectedly", "Not knowing what will happen next", "Being late", "Having to wait", "Finishing later than expected", "Someone changing their mind", "Changes at short notice"],
+      "prepareHelp": ["Visual timetable", "Written timetable", "Knowing who will be there", "Knowing where I will sit", "Knowing what work I will do", "Knowing when the lesson will finish", "Warning about changes", "Being able to ask questions beforehand", "Seeing the room beforehand", "Having someone explain what will happen"],
+      "arrivalFactors": ["Not knowing what will happen", "Being late"],
+      "worryFactors": ["Something I cannot predict"]
     }
   },
   "Masking / exhaustion": {
-    colourClass:"exhaustion",
-    groups:["hideFactors","nightFactors","overloadResponses","homeFirst"],
-    triggers:{
-      "hideFactors":["Anxiety","Sadness","Confusion","Anger","Tiredness","Sensory overload","Not understanding","Wanting to leave","Not knowing what to say","Feeling different"],
-      "nightFactors":["I cannot sleep","I sleep much more","I become irritable","I cry","I shut myself away","I feel physically unwell"],
-      "overloadResponses":["I become very tired","I do not notice until afterwards","I feel disconnected"],
-      "homeFirst":["Less tired","Relieved","Calm","Safe"]
+    colourClass: "exhaustion",
+    groups: ["hideFactors", "nightFactors", "overloadResponses", "homeFirst"],
+    triggers: {
+      "hideFactors": ["Anxiety", "Sadness", "Confusion", "Anger", "Tiredness", "Sensory overload", "Not understanding", "Wanting to leave", "Not knowing what to say", "Feeling different"],
+      "nightFactors": ["I cannot sleep", "I sleep much more", "I become irritable", "I cry", "I shut myself away", "I feel physically unwell"],
+      "overloadResponses": ["I become very tired", "I do not notice until afterwards", "I feel disconnected"],
+      "homeFirst": ["Less tired", "Relieved", "Calm", "Safe"]
     }
   },
   "Attendance / avoidance cycle": {
-    colourClass:"attendance",
-    groups:["goFactors","homeFirst","homeLater","returnDifficult","highAnxiety"],
-    triggers:{
-      "goFactors":["I ask to stay at home","I become physically unwell","I freeze","I cannot move","I hide/withdraw","I need lots of reassurance"],
-      "homeFirst":["Relieved","Calm","Safe","Less anxious"],
-      "homeLater":["I start worrying about tomorrow","I worry about going back","I worry about missed work","I worry about what teachers will say","I worry about what pupils will say","I feel more disconnected from school","Going back feels even harder"],
-      "returnDifficult":["Missed work","Catching up","Teachers asking where I have been","Other pupils asking","Worry about what people think","Walking back into the classroom","Not knowing what has changed","Feeling everyone is looking at me","Feeling embarrassed","Being told off","Fear the same problem will happen again","School feels unfamiliar"],
-      "highAnxiety":["Ask to go home","Ask to leave the lesson","Go somewhere quiet","Run away/leave","Hide","Shut down","Stop speaking","Stop responding","Become physically unwell","Panic"]
+    colourClass: "attendance",
+    groups: ["goFactors", "homeFirst", "homeLater", "returnDifficult", "highAnxiety"],
+    triggers: {
+      "goFactors": ["I ask to stay at home", "I become physically unwell", "I freeze", "I cannot move", "I hide/withdraw", "I need lots of reassurance"],
+      "homeFirst": ["Relieved", "Calm", "Safe", "Less anxious"],
+      "homeLater": ["I start worrying about tomorrow", "I worry about going back", "I worry about missed work", "I worry about what teachers will say", "I worry about what pupils will say", "I feel more disconnected from school", "Going back feels even harder"],
+      "returnDifficult": ["Missed work", "Catching up", "Teachers asking where I have been", "Other pupils asking", "Worry about what people think", "Walking back into the classroom", "Not knowing what has changed", "Feeling everyone is looking at me", "Feeling embarrassed", "Being told off", "Fear the same problem will happen again", "School feels unfamiliar"],
+      "highAnxiety": ["Ask to go home", "Ask to leave the lesson", "Go somewhere quiet", "Run away/leave", "Hide", "Shut down", "Stop speaking", "Stop responding", "Become physically unwell", "Panic"]
     }
   },
   "Adult / relationship factors": {
-    colourClass:"adults",
-    groups:["safeAdults","helpfulAdults","unhelpfulAdults"],
-    triggers:{
-      "safeAdults":["Parent/carer","Form tutor","Head of year","Teaching assistant","Teacher","SENCO","Pastoral staff","School counsellor"],
-      "helpfulAdults":["Listen","Believe me","Do not judge me","Give me time","Do not make me talk immediately","Speak quietly","Explain things clearly","Give me choices","Warn me about changes","Help me leave an overwhelming situation","Stay nearby","Help me without other pupils noticing"],
-      "unhelpfulAdults":["Keep asking questions","Make me explain myself","Tell me to calm down","Tell me there is nothing to worry about","Tell me I am overreacting","Tell me I have to do it","Give me warnings/threats","Give me sanctions","Make me speak in front of people","Make me look at them","Make me join in","Do not believe me","Think I am being difficult","Think I am being lazy","Talk about me in front of others"]
+    colourClass: "adults",
+    groups: ["safeAdults", "helpfulAdults", "unhelpfulAdults"],
+    triggers: {
+      "safeAdults": ["Parent/carer", "Form tutor", "Head of year", "Teaching assistant", "Teacher", "SENCO", "Pastoral staff", "School counsellor"],
+      "helpfulAdults": ["Listen", "Believe me", "Do not judge me", "Give me time", "Do not make me talk immediately", "Speak quietly", "Explain things clearly", "Give me choices", "Warn me about changes", "Help me leave an overwhelming situation", "Stay nearby", "Help me without other pupils noticing"],
+      "unhelpfulAdults": ["Keep asking questions", "Make me explain myself", "Tell me to calm down", "Tell me there is nothing to worry about", "Tell me I am overreacting", "Tell me I have to do it", "Give me warnings/threats", "Give me sanctions", "Make me speak in front of people", "Make me look at them", "Make me join in", "Do not believe me", "Think I am being difficult", "Think I am being lazy", "Talk about me in front of others"]
     }
   }
 };
-
-function domainScore(domain){
+function domainScore(domain) {
   let score = 0;
   const hits = [];
-  for(const group of domain.groups){
+  for (const group of domain.groups) {
     const chosen = Array.isArray(answers[group]) ? answers[group] : [];
     const triggers = domain.triggers[group] || [];
-    chosen.forEach(v=>{
-      if(triggers.includes(v)){ score++; hits.push(v); }
+    chosen.forEach((v) => {
+      if (triggers.includes(v)) {
+        score++;
+        hits.push(v);
+      }
     });
   }
-  return {score, hits:[...new Set(hits)]};
+  return { score, hits: [...new Set(hits)] };
 }
-
-function level(score){
-  if(score >= 9) return "prominent";
-  if(score >= 5) return "substantial";
-  if(score >= 2) return "present";
+function level(score) {
+  if (score >= 9) return "prominent";
+  if (score >= 5) return "substantial";
+  if (score >= 2) return "present";
   return "limited";
 }
-
-function formulationData(){
+function formulationData() {
   const result = {};
-  Object.entries(domains).forEach(([name,d])=>{
+  Object.entries(domains).forEach(([name, d]) => {
     const r = domainScore(d);
-    result[name] = {...r, level:level(r.score)};
+    result[name] = __spreadProps(__spreadValues({}, r), { level: level(r.score) });
   });
   return result;
 }
-
-function wireNavigation(){
-  document.querySelectorAll(".next").forEach(btn=>{
-    btn.addEventListener("click",()=>{
+function wireNavigation() {
+  document.querySelectorAll(".next").forEach((btn) => {
+    btn.addEventListener("click", () => {
       collectAnswers();
-      if(current < total) showPage(step(current,1));
+      if (current < total) showPage(step(current, 1));
     });
   });
-  document.querySelectorAll(".prev").forEach(btn=>{
-    btn.addEventListener("click",()=>{
+  document.querySelectorAll(".prev").forEach((btn) => {
+    btn.addEventListener("click", () => {
       collectAnswers();
-      if(current > 0) showPage(step(current,-1));
+      if (current > 0) showPage(step(current, -1));
     });
   });
-  document.addEventListener("change",()=>collectAnswers());
-  document.addEventListener("input",()=>collectAnswers());
+  document.addEventListener("change", () => collectAnswers());
+  document.addEventListener("input", () => collectAnswers());
 }
-
-document.getElementById("copyBtn")?.addEventListener("click",async()=>{
+(_a = document.getElementById("copyBtn")) == null ? void 0 : _a.addEventListener("click", async () => {
   const text = makeReportText();
-  try{
+  try {
     await navigator.clipboard.writeText(text);
-    const b=document.getElementById("copyBtn");
-    b.textContent="✓ Copied";
-    setTimeout(()=>b.textContent="📋 Copy report",1800);
-  }catch(e){
-    const ta=document.createElement("textarea");
-    ta.value=text; document.body.appendChild(ta); ta.select();
-    document.execCommand("copy"); ta.remove();
-    document.getElementById("copyBtn").textContent="✓ Copied";
+    const b = document.getElementById("copyBtn");
+    b.textContent = "\u2713 Copied";
+    setTimeout(() => b.textContent = "\u{1F4CB} Copy report", 1800);
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    document.getElementById("copyBtn").textContent = "\u2713 Copied";
   }
 });
-
-/* Make the three-choice limits work even when the page was generated dynamically. */
-function setupLimits(){
-  maxThree("topHard","topHardError");
-  maxThree("topHelp","topHelpError");
+function setupLimits() {
+  maxThree("topHard", "topHardError");
+  maxThree("topHelp", "topHelpError");
 }
-
-/* ---------- QUESTION OPTIONS (builds every empty answer grid) ---------- */
 const RNS = "I would rather not say";
-
 const radioOptions = {
-  storyWhen: ["Primary school","Moving to secondary school","Year 7","Year 8","Year 9","Year 10","Year 11","Sixth form / college","It has always been difficult","This school year","Recently","I do not know"]
+  storyWhen: ["Primary school", "Moving to secondary school", "Year 7", "Year 8", "Year 9", "Year 10", "Year 11", "Sixth form / college", "It has always been difficult", "This school year", "Recently", "I do not know"]
 };
-
 const checkboxOptions = {
-  parentTried: ["Talking it through with them","Gentle encouragement","Reward systems","Firm expectations","Taking them in myself","Letting them stay home on very bad days","Changing morning routines","Contacting school","Asking the GP or health services for help","CAMHS, counselling or therapy","Other"],
-  parentSchoolSupport: ["A key adult or mentor","A reduced or part-time timetable","A safe or quiet space","A pass to leave lessons","Emotional support (e.g. ELSA)","Changes to lessons or work","An attendance or return plan","Referral to other services","Nothing yet","I am not sure"],
-  parentImpact: ["Stress or conflict at home","Mornings are very difficult","Impact on my work","Impact on brothers or sisters","Worry about my child's future","Worry about fines or legal action","Feeling blamed","Feeling unsupported","We are coping okay"],
-  strengthsSkills: ["Art or drawing","Music","Sport or fitness","Computers, coding or gaming","Reading or writing stories","Maths or puzzles","Science","Making or building things","Cooking","Drama or performing","Looking after animals","Looking after or helping others","Making people laugh","Remembering facts","Noticing details","Coming up with ideas","Solving problems","Learning about things I am interested in","Something else"],
-  strengthsQualities: ["Kind","Funny","Caring","Loyal","Honest","Creative","Clever","Determined","Brave","Calm","Hard-working","Good listener","Thoughtful","Helpful","Fair","Imaginative","Good friend","Curious","I am not sure"],
-  schoolLikes: ["Seeing my friends","A particular teacher or adult","Some lessons","Learning new things","Practical lessons","Clubs or activities","Break or lunchtime","Quiet spaces or the library","Sport or PE","Doing well in something","Being helpful","Nothing at the moment"],
-  favSubjects: ["English","Maths","Science","History","Geography","Languages","Art","Music","Drama","PE","Computing","Design & Technology","Food technology","RE / PSHE","Other"],
-  betterTimes: ["I had slept well","I knew what would happen","A trusted adult was there","A friend was there","I had lessons I like","The work felt manageable","It was quieter","I arrived at a good time","There was less pressure","I could take a break when I needed","I had a shorter day","Something fun was happening","I felt well","I cannot think of a time yet"],
-  copingTried: ["Listening to music","Breathing slowly","Talking to someone I trust","Planning or knowing the day","Going somewhere quiet","Exercise or getting outside","Gaming or screen time","Drawing, writing or being creative","Spending time with a pet","Writing my worries down","Using a fidget or comfort item","Distracting myself","Going in a bit at a time","Nothing yet"],
-  hopes: ["Go to school more often","Feel less worried","Feel more comfortable in lessons","Have friends or feel part of a group","Keep up with my work","Get good grades or qualifications","Go to college or sixth form","Get a job I enjoy","Learn a skill or trade","Feel happier","Be understood by adults","I do not know yet"],
-  smallStep: ["Talking to a trusted adult","Going in for part of the day","Going to one lesson I like","Visiting school when it is quiet","Meeting my key adult","Knowing my timetable for the week","Having a plan for difficult moments","Spending time with a friend","Doing a little bit of schoolwork at home","I am not sure yet"],
-  storyFactors: ["Moving school","Moving up a year","A change of teacher","Friendship problems","Falling out with friends","Being bullied","Work becoming harder","Exams or tests","Being ill","A long time off school","Lockdown / COVID","Changes at home","Someone close being ill","Someone close dying","Parents separating","Moving house","Puberty / body changes","Nothing I can think of","I do not know",RNS],
-  nightFactors: ["I start worrying","I cannot sleep","I sleep much more","I have bad dreams","I feel sick","I get headaches","I get stomach aches","I feel physically unwell","I become irritable","I cry","I shut myself away","I argue with people at home","I check things over and over","I ask lots of questions","I try not to think about it","I feel fine","I do not know"],
-  worryFactors: ["Getting something wrong","Being asked a question","Being unable to answer","Falling behind","Not understanding the work","Being told off","Getting into trouble","Being laughed at","Being left out","Being hurt","Being on my own","Feeling ill at school","Having a panic attack","Not being able to leave","Something I cannot predict","Something happening at home while I am away","I do not know",RNS],
-  morningFactors: ["Waking up","Getting out of bed","Getting dressed","Wearing my uniform","Eating breakfast","Leaving the house","Travelling to school","Seeing other pupils","Being rushed","Thinking about the day ahead","None of the morning is difficult","I do not know"],
-  goFactors: ["I go, even though I feel anxious","I ask to stay at home","I argue","I cry","I become angry","I become physically unwell","I freeze","I cannot move","I hide/withdraw","I need lots of reassurance","I go but leave later","I do not know"],
-  arrivalFactors: ["Getting out of the car / off the bus","Walking through the gate","Walking through reception","Seeing lots of people","Crowded corridors","Noise","Registration","Being late","Not knowing what will happen","Seeing particular people","Going to the first lesson","None of these"],
-  arrivalHelp: ["Arriving earlier than everyone else","Arriving later when it is quieter","Using a different entrance","Being met by a trusted adult","Going to a quiet space first","Walking in with a friend","Knowing the plan for the day","A short check-in","Starting with a lesson I like","Having something to do straight away","I do not know"],
-  socialFactors: ["Being watched","Being listened to","Speaking in front of people","Reading aloud","Giving a presentation","Being called on unexpectedly","Working in a group","Working with another pupil","Making conversation","Starting a conversation","Joining a group","Finding someone to sit with","Break and lunchtime","Eating in front of people","Changing for PE","Being around particular people","None of these"],
-  socialThoughts: ["They will laugh at me","They will judge me","They will stare at me","They will talk about me","They will leave me out","They will reject me","I will embarrass myself","I am weird","I am different","I am stupid","I will say something wrong","I will do something wrong","I do not worry about this","I do not know"],
-  hideFactors: ["Anxiety","Sadness","Confusion","Anger","Tiredness","Sensory overload","Not understanding","Wanting to leave","Not knowing what to say","Feeling different","I do not hide how I feel",RNS],
-  peerEvents: ["Someone has laughed at me","Someone has called me names","Someone has copied/mocked me","Someone has deliberately excluded me","Someone has threatened me","Someone has hurt me","Someone has deliberately embarrassed me","Someone has made me frightened","People have spread rumours","Something has happened online","None of these",RNS],
-  peopleDifficult: ["I am frightened of them","They have hurt me","They make comments","They stare at me","They laugh at me","They exclude me","They are in my lessons","I see them at break or lunch","They message me online","Something else",RNS],
-  lessonFactors: ["Not understanding","Working independently","Starting the work","Finishing the work","Working quickly","Remembering instructions","Asking for help","Teacher asking me a question","Being asked to answer immediately","Giving the wrong answer","Other pupils hearing my answer","Reading aloud","Writing","Maths","Tests","Exams","Homework","Presentations","Group work","Being given too much work","Unclear instructions","Getting things wrong","None of these"],
-  dontUnderstand: ["Ask the teacher","Ask another pupil","Pretend I understand","Copy someone else","Stop working","Become distracted","Become anxious","Become angry","Shut down","Leave the room","I do not know what to do"],
-  workWorries: ["I will get it wrong","People will notice","People will laugh","Teacher will think I am stupid","Teacher will think I am lazy","I will get into trouble","I will fall behind","I will have to stay longer","I will have to explain myself","I will feel like giving up","I do not worry about this"],
-  sensoryFactors: ["Loud voices","Shouting","Bells","Echoes","Crowds","People moving around","People bumping into me","Bright lights","Flickering lights","Smells","Food smells","Uniform","Temperature","Touch","Dining hall","Corridors","PE changing rooms","Assembly","Visual clutter","None of these"],
-  overloadResponses: ["I cannot think","I cannot speak","I cannot answer questions","I need to get away","I need silence","I hide","I shut down","I become angry","I cry","I become very tired","I feel physically ill","I feel numb","I feel disconnected","I do not notice until afterwards","I do not know"],
-  changeFactors: ["A different teacher","A supply teacher","A different classroom","A timetable change","A lesson being cancelled","A lesson being moved","A change of seating","A different route around school","Someone unfamiliar in the room","Unexpected visitors","Being asked to do something unexpectedly","Not knowing what will happen next","Being late","Having to wait","Finishing later than expected","Someone changing their mind","Changes at short notice","Changes do not bother me"],
-  prepareHelp: ["Visual timetable","Written timetable","Knowing who will be there","Knowing where I will sit","Knowing what work I will do","Knowing when the lesson will finish","Warning about changes","Being able to ask questions beforehand","Seeing the room beforehand","Having someone explain what will happen","I do not know"],
-  highAnxiety: ["Ask to go home","Ask to leave the lesson","Go somewhere quiet","Run away/leave","Hide","Shut down","Stop speaking","Stop responding","Become angry","Cry","Become physically unwell","Panic","Keep going and hide it","I do not know"],
-  calmHelp: ["Going somewhere quiet","Being on my own","Being with a trusted adult","Being with a friend","Music / headphones","Moving around / walking","Fidget or sensory item","Drawing or doodling","Breathing slowly","Having a drink or snack","Not being asked questions","Time","Going home","I do not know"],
-  homeFirst: ["Relieved","Calm","Safe","Less anxious","Less tired","Guilty","Worried","Bored","Lonely","Sad","Angry","Nothing changes","I do not know"],
-  homeLater: ["I start worrying about tomorrow","I worry about going back","I worry about missed work","I worry about what teachers will say","I worry about what pupils will say","I feel more disconnected from school","Going back feels even harder","I feel okay","I do not know"],
-  returnDifficult: ["Missed work","Catching up","Teachers asking where I have been","Other pupils asking","Worry about what people think","Walking back into the classroom","Not knowing what has changed","Feeling everyone is looking at me","Feeling embarrassed","Being told off","Fear the same problem will happen again","School feels unfamiliar","None of these"],
-  safeAdults: ["Parent/carer","Form tutor","Head of year","Teaching assistant","Teacher","SENCO","Pastoral staff","School counsellor","Receptionist / office staff","Another adult","No adults at school",RNS],
-  helpfulAdults: ["Listen","Believe me","Do not judge me","Give me time","Do not make me talk immediately","Speak quietly","Explain things clearly","Give me choices","Warn me about changes","Help me leave an overwhelming situation","Stay nearby","Help me without other pupils noticing","Check in with me"],
-  unhelpfulAdults: ["Keep asking questions","Make me explain myself","Tell me to calm down","Tell me there is nothing to worry about","Tell me I am overreacting","Tell me I have to do it","Give me warnings/threats","Give me sanctions","Make me speak in front of people","Make me look at them","Make me join in","Do not believe me","Think I am being difficult","Think I am being lazy","Talk about me in front of others","None of these"],
-  importantThings: ["I am not choosing to be difficult","I am not being lazy","I really do want to go","It is harder than it looks","I am frightened","I am exhausted","Something is happening that adults do not know about","I need things to go slowly","I need to be listened to","I need more help with the work","The environment is too much for me","I do not know how to explain it",RNS],
-  talkAbout: ["Feeling unsafe","Other pupils","A member of staff","Something at home","My feelings","My work","Getting back to school","Something else",RNS]
+  parentTried: ["Talking it through with them", "Gentle encouragement", "Reward systems", "Firm expectations", "Taking them in myself", "Letting them stay home on very bad days", "Changing morning routines", "Contacting school", "Asking the GP or health services for help", "CAMHS, counselling or therapy", "Other"],
+  parentSchoolSupport: ["A key adult or mentor", "A reduced or part-time timetable", "A safe or quiet space", "A pass to leave lessons", "Emotional support (e.g. ELSA)", "Changes to lessons or work", "An attendance or return plan", "Referral to other services", "Nothing yet", "I am not sure"],
+  parentImpact: ["Stress or conflict at home", "Mornings are very difficult", "Impact on my work", "Impact on brothers or sisters", "Worry about my child's future", "Worry about fines or legal action", "Feeling blamed", "Feeling unsupported", "We are coping okay"],
+  strengthsSkills: ["Art or drawing", "Music", "Sport or fitness", "Computers, coding or gaming", "Reading or writing stories", "Maths or puzzles", "Science", "Making or building things", "Cooking", "Drama or performing", "Looking after animals", "Looking after or helping others", "Making people laugh", "Remembering facts", "Noticing details", "Coming up with ideas", "Solving problems", "Learning about things I am interested in", "Something else"],
+  strengthsQualities: ["Kind", "Funny", "Caring", "Loyal", "Honest", "Creative", "Clever", "Determined", "Brave", "Calm", "Hard-working", "Good listener", "Thoughtful", "Helpful", "Fair", "Imaginative", "Good friend", "Curious", "I am not sure"],
+  schoolLikes: ["Seeing my friends", "A particular teacher or adult", "Some lessons", "Learning new things", "Practical lessons", "Clubs or activities", "Break or lunchtime", "Quiet spaces or the library", "Sport or PE", "Doing well in something", "Being helpful", "Nothing at the moment"],
+  favSubjects: ["English", "Maths", "Science", "History", "Geography", "Languages", "Art", "Music", "Drama", "PE", "Computing", "Design & Technology", "Food technology", "RE / PSHE", "Other"],
+  betterTimes: ["I had slept well", "I knew what would happen", "A trusted adult was there", "A friend was there", "I had lessons I like", "The work felt manageable", "It was quieter", "I arrived at a good time", "There was less pressure", "I could take a break when I needed", "I had a shorter day", "Something fun was happening", "I felt well", "I cannot think of a time yet"],
+  copingTried: ["Listening to music", "Breathing slowly", "Talking to someone I trust", "Planning or knowing the day", "Going somewhere quiet", "Exercise or getting outside", "Gaming or screen time", "Drawing, writing or being creative", "Spending time with a pet", "Writing my worries down", "Using a fidget or comfort item", "Distracting myself", "Going in a bit at a time", "Nothing yet"],
+  hopes: ["Go to school more often", "Feel less worried", "Feel more comfortable in lessons", "Have friends or feel part of a group", "Keep up with my work", "Get good grades or qualifications", "Go to college or sixth form", "Get a job I enjoy", "Learn a skill or trade", "Feel happier", "Be understood by adults", "I do not know yet"],
+  smallStep: ["Talking to a trusted adult", "Going in for part of the day", "Going to one lesson I like", "Visiting school when it is quiet", "Meeting my key adult", "Knowing my timetable for the week", "Having a plan for difficult moments", "Spending time with a friend", "Doing a little bit of schoolwork at home", "I am not sure yet"],
+  storyFactors: ["Moving school", "Moving up a year", "A change of teacher", "Friendship problems", "Falling out with friends", "Being bullied", "Work becoming harder", "Exams or tests", "Being ill", "A long time off school", "Lockdown / COVID", "Changes at home", "Someone close being ill", "Someone close dying", "Parents separating", "Moving house", "Puberty / body changes", "Nothing I can think of", "I do not know", RNS],
+  nightFactors: ["I start worrying", "I cannot sleep", "I sleep much more", "I have bad dreams", "I feel sick", "I get headaches", "I get stomach aches", "I feel physically unwell", "I become irritable", "I cry", "I shut myself away", "I argue with people at home", "I check things over and over", "I ask lots of questions", "I try not to think about it", "I feel fine", "I do not know"],
+  worryFactors: ["Getting something wrong", "Being asked a question", "Being unable to answer", "Falling behind", "Not understanding the work", "Being told off", "Getting into trouble", "Being laughed at", "Being left out", "Being hurt", "Being on my own", "Feeling ill at school", "Having a panic attack", "Not being able to leave", "Something I cannot predict", "Something happening at home while I am away", "I do not know", RNS],
+  morningFactors: ["Waking up", "Getting out of bed", "Getting dressed", "Wearing my uniform", "Eating breakfast", "Leaving the house", "Travelling to school", "Seeing other pupils", "Being rushed", "Thinking about the day ahead", "None of the morning is difficult", "I do not know"],
+  goFactors: ["I go, even though I feel anxious", "I ask to stay at home", "I argue", "I cry", "I become angry", "I become physically unwell", "I freeze", "I cannot move", "I hide/withdraw", "I need lots of reassurance", "I go but leave later", "I do not know"],
+  arrivalFactors: ["Getting out of the car / off the bus", "Walking through the gate", "Walking through reception", "Seeing lots of people", "Crowded corridors", "Noise", "Registration", "Being late", "Not knowing what will happen", "Seeing particular people", "Going to the first lesson", "None of these"],
+  arrivalHelp: ["Arriving earlier than everyone else", "Arriving later when it is quieter", "Using a different entrance", "Being met by a trusted adult", "Going to a quiet space first", "Walking in with a friend", "Knowing the plan for the day", "A short check-in", "Starting with a lesson I like", "Having something to do straight away", "I do not know"],
+  socialFactors: ["Being watched", "Being listened to", "Speaking in front of people", "Reading aloud", "Giving a presentation", "Being called on unexpectedly", "Working in a group", "Working with another pupil", "Making conversation", "Starting a conversation", "Joining a group", "Finding someone to sit with", "Break and lunchtime", "Eating in front of people", "Changing for PE", "Being around particular people", "None of these"],
+  socialThoughts: ["They will laugh at me", "They will judge me", "They will stare at me", "They will talk about me", "They will leave me out", "They will reject me", "I will embarrass myself", "I am weird", "I am different", "I am stupid", "I will say something wrong", "I will do something wrong", "I do not worry about this", "I do not know"],
+  hideFactors: ["Anxiety", "Sadness", "Confusion", "Anger", "Tiredness", "Sensory overload", "Not understanding", "Wanting to leave", "Not knowing what to say", "Feeling different", "I do not hide how I feel", RNS],
+  peerEvents: ["Someone has laughed at me", "Someone has called me names", "Someone has copied/mocked me", "Someone has deliberately excluded me", "Someone has threatened me", "Someone has hurt me", "Someone has deliberately embarrassed me", "Someone has made me frightened", "People have spread rumours", "Something has happened online", "None of these", RNS],
+  peopleDifficult: ["I am frightened of them", "They have hurt me", "They make comments", "They stare at me", "They laugh at me", "They exclude me", "They are in my lessons", "I see them at break or lunch", "They message me online", "Something else", RNS],
+  lessonFactors: ["Not understanding", "Working independently", "Starting the work", "Finishing the work", "Working quickly", "Remembering instructions", "Asking for help", "Teacher asking me a question", "Being asked to answer immediately", "Giving the wrong answer", "Other pupils hearing my answer", "Reading aloud", "Writing", "Maths", "Tests", "Exams", "Homework", "Presentations", "Group work", "Being given too much work", "Unclear instructions", "Getting things wrong", "None of these"],
+  dontUnderstand: ["Ask the teacher", "Ask another pupil", "Pretend I understand", "Copy someone else", "Stop working", "Become distracted", "Become anxious", "Become angry", "Shut down", "Leave the room", "I do not know what to do"],
+  workWorries: ["I will get it wrong", "People will notice", "People will laugh", "Teacher will think I am stupid", "Teacher will think I am lazy", "I will get into trouble", "I will fall behind", "I will have to stay longer", "I will have to explain myself", "I will feel like giving up", "I do not worry about this"],
+  sensoryFactors: ["Loud voices", "Shouting", "Bells", "Echoes", "Crowds", "People moving around", "People bumping into me", "Bright lights", "Flickering lights", "Smells", "Food smells", "Uniform", "Temperature", "Touch", "Dining hall", "Corridors", "PE changing rooms", "Assembly", "Visual clutter", "None of these"],
+  overloadResponses: ["I cannot think", "I cannot speak", "I cannot answer questions", "I need to get away", "I need silence", "I hide", "I shut down", "I become angry", "I cry", "I become very tired", "I feel physically ill", "I feel numb", "I feel disconnected", "I do not notice until afterwards", "I do not know"],
+  changeFactors: ["A different teacher", "A supply teacher", "A different classroom", "A timetable change", "A lesson being cancelled", "A lesson being moved", "A change of seating", "A different route around school", "Someone unfamiliar in the room", "Unexpected visitors", "Being asked to do something unexpectedly", "Not knowing what will happen next", "Being late", "Having to wait", "Finishing later than expected", "Someone changing their mind", "Changes at short notice", "Changes do not bother me"],
+  prepareHelp: ["Visual timetable", "Written timetable", "Knowing who will be there", "Knowing where I will sit", "Knowing what work I will do", "Knowing when the lesson will finish", "Warning about changes", "Being able to ask questions beforehand", "Seeing the room beforehand", "Having someone explain what will happen", "I do not know"],
+  highAnxiety: ["Ask to go home", "Ask to leave the lesson", "Go somewhere quiet", "Run away/leave", "Hide", "Shut down", "Stop speaking", "Stop responding", "Become angry", "Cry", "Become physically unwell", "Panic", "Keep going and hide it", "I do not know"],
+  calmHelp: ["Going somewhere quiet", "Being on my own", "Being with a trusted adult", "Being with a friend", "Music / headphones", "Moving around / walking", "Fidget or sensory item", "Drawing or doodling", "Breathing slowly", "Having a drink or snack", "Not being asked questions", "Time", "Going home", "I do not know"],
+  homeFirst: ["Relieved", "Calm", "Safe", "Less anxious", "Less tired", "Guilty", "Worried", "Bored", "Lonely", "Sad", "Angry", "Nothing changes", "I do not know"],
+  homeLater: ["I start worrying about tomorrow", "I worry about going back", "I worry about missed work", "I worry about what teachers will say", "I worry about what pupils will say", "I feel more disconnected from school", "Going back feels even harder", "I feel okay", "I do not know"],
+  returnDifficult: ["Missed work", "Catching up", "Teachers asking where I have been", "Other pupils asking", "Worry about what people think", "Walking back into the classroom", "Not knowing what has changed", "Feeling everyone is looking at me", "Feeling embarrassed", "Being told off", "Fear the same problem will happen again", "School feels unfamiliar", "None of these"],
+  safeAdults: ["Parent/carer", "Form tutor", "Head of year", "Teaching assistant", "Teacher", "SENCO", "Pastoral staff", "School counsellor", "Receptionist / office staff", "Another adult", "No adults at school", RNS],
+  helpfulAdults: ["Listen", "Believe me", "Do not judge me", "Give me time", "Do not make me talk immediately", "Speak quietly", "Explain things clearly", "Give me choices", "Warn me about changes", "Help me leave an overwhelming situation", "Stay nearby", "Help me without other pupils noticing", "Check in with me"],
+  unhelpfulAdults: ["Keep asking questions", "Make me explain myself", "Tell me to calm down", "Tell me there is nothing to worry about", "Tell me I am overreacting", "Tell me I have to do it", "Give me warnings/threats", "Give me sanctions", "Make me speak in front of people", "Make me look at them", "Make me join in", "Do not believe me", "Think I am being difficult", "Think I am being lazy", "Talk about me in front of others", "None of these"],
+  importantThings: ["I am not choosing to be difficult", "I am not being lazy", "I really do want to go", "It is harder than it looks", "I am frightened", "I am exhausted", "Something is happening that adults do not know about", "I need things to go slowly", "I need to be listened to", "I need more help with the work", "The environment is too much for me", "I do not know how to explain it", RNS],
+  talkAbout: ["Feeling unsafe", "Other pupils", "A member of staff", "Something at home", "My feelings", "My work", "Getting back to school", "Something else", RNS]
 };
-
 const helpSections = {
-  "Getting into school": ["Arriving at a quieter time","A trusted adult to meet me","A quiet place to start the day","A different entrance","Knowing the plan for the day"],
-  "Lessons and learning": ["Help with work I have missed","Work broken into smaller steps","Not being asked questions in front of the class","Written instructions","Extra time","A way to ask for help privately","Choosing where I sit"],
-  "Feelings and anxiety": ["A way to leave the room when I need to","A safe space to go to","Regular check-ins with a trusted adult","Help to understand and manage anxiety","Adults who believe me"],
-  "Friendships and people": ["Help with friendships","Somewhere quiet at break and lunch","A buddy or small group","Adults dealing with people who make school hard"],
-  "Timetable and environment": ["A reduced or part-time timetable to start with","A gradual return plan","Warnings about changes","Leaving lessons early to avoid crowds","Sensory adjustments (noise, light, uniform)"]
+  "Getting into school": ["Arriving at a quieter time", "A trusted adult to meet me", "A quiet place to start the day", "A different entrance", "Knowing the plan for the day"],
+  "Lessons and learning": ["Help with work I have missed", "Work broken into smaller steps", "Not being asked questions in front of the class", "Written instructions", "Extra time", "A way to ask for help privately", "Choosing where I sit"],
+  "Feelings and anxiety": ["A way to leave the room when I need to", "A safe space to go to", "Regular check-ins with a trusted adult", "Help to understand and manage anxiety", "Adults who believe me"],
+  "Friendships and people": ["Help with friendships", "Somewhere quiet at break and lunch", "A buddy or small group", "Adults dealing with people who make school hard"],
+  "Timetable and environment": ["A reduced or part-time timetable to start with", "A gradual return plan", "Warnings about changes", "Leaving lessons early to avoid crowds", "Sensory adjustments (noise, light, uniform)"]
 };
-
-const topHardOptions = ["Worrying the night before","Getting out of the house","Arriving at school","Other pupils","A particular person or group","Understanding the work","Speaking in class","Noise and crowds","Changes and not knowing what will happen","Feeling tired","Feeling ill","Catching up after being away","How adults respond","Something at home"];
+const topHardOptions = ["Worrying the night before", "Getting out of the house", "Arriving at school", "Other pupils", "A particular person or group", "Understanding the work", "Speaking in class", "Noise and crowds", "Changes and not knowing what will happen", "Feeling tired", "Feeling ill", "Catching up after being away", "How adults respond", "Something at home"];
 const topHelpOptions = Object.values(helpSections).flat();
-
-function choiceHTML(type, attr, value, label){
-  return `<label class="choice"><input type="${type}" ${attr} value="${esc(value)}"><span>${esc(label ?? value)}</span></label>`;
+function choiceHTML(type, attr, value, label) {
+  return '<label class="choice"><input type="'.concat(type, '" ').concat(attr, ' value="').concat(esc(value), '"><span>').concat(esc(label != null ? label : value), "</span></label>");
 }
-
-function buildOptions(){
-  Object.entries(radioOptions).forEach(([id,opts])=>{
+function buildOptions() {
+  Object.entries(radioOptions).forEach(([id, opts]) => {
     const el = document.getElementById(id);
-    if(el) el.innerHTML = opts.map(v=>choiceHTML("radio",`data-key="${id}" name="${id}"`,v)).join("");
+    if (el) el.innerHTML = opts.map((v) => choiceHTML("radio", 'data-key="'.concat(id, '" name="').concat(id, '"'), v)).join("");
   });
-  Object.entries(checkboxOptions).forEach(([id,opts])=>{
+  Object.entries(checkboxOptions).forEach(([id, opts]) => {
     const el = document.getElementById(id);
-    if(el) el.innerHTML = opts.map(v=>choiceHTML("checkbox",`data-group="${id}"`,v)).join("");
+    if (el) el.innerHTML = opts.map((v) => choiceHTML("checkbox", 'data-group="'.concat(id, '"'), v)).join("");
   });
-  [["anxietyRating",0,10],["predictRating",1,5],["copingRating",0,10],["confidenceRating",0,10]].forEach(([id,min,max])=>{
+  [["anxietyRating", 0, 10], ["predictRating", 1, 5], ["copingRating", 0, 10], ["confidenceRating", 0, 10]].forEach(([id, min, max]) => {
     const el = document.getElementById(id);
-    if(!el) return;
+    if (!el) return;
     let h = "";
-    for(let n=min;n<=max;n++) h += choiceHTML("radio",`data-key="${id}" name="${id}"`,String(n));
+    for (let n = min; n <= max; n++) h += choiceHTML("radio", 'data-key="'.concat(id, '" name="').concat(id, '"'), String(n));
     el.innerHTML = h;
-    if(id==="predictRating") el.style.gridTemplateColumns = "repeat(5,1fr)";
+    if (id === "predictRating") el.style.gridTemplateColumns = "repeat(5,1fr)";
   });
   const hs = document.getElementById("helpSections");
-  if(hs){
-    hs.innerHTML = Object.entries(helpSections).map(([title,opts])=>
-      `<div class="field"><label class="question">${esc(title)}</label><div class="choice-grid">${
-        opts.map(v=>choiceHTML("checkbox",`data-group="help_${esc(title)}"`,v)).join("")
-      }</div></div>`).join("");
+  if (hs) {
+    hs.innerHTML = Object.entries(helpSections).map(([title, opts]) => '<div class="field"><label class="question">'.concat(esc(title), '</label><div class="choice-grid">').concat(opts.map((v) => choiceHTML("checkbox", 'data-group="help_'.concat(esc(title), '"'), v)).join(""), "</div></div>")).join("");
   }
   const th = document.getElementById("topHard");
-  if(th) th.innerHTML = topHardOptions.map(v=>choiceHTML("checkbox",'data-group="topHard"',v)).join("");
+  if (th) th.innerHTML = topHardOptions.map((v) => choiceHTML("checkbox", 'data-group="topHard"', v)).join("");
   const tp = document.getElementById("topHelp");
-  if(tp) tp.innerHTML = topHelpOptions.map(v=>choiceHTML("checkbox",'data-group="topHelp"',v)).join("");
+  if (tp) tp.innerHTML = topHelpOptions.map((v) => choiceHTML("checkbox", 'data-group="topHelp"', v)).join("");
 }
-
-/* The welcome-page mood question has no data-key; give it one so it is saved. */
-document.querySelectorAll('input[name="todayFeeling"]').forEach(el=>el.dataset.key="todayFeeling");
-
+document.querySelectorAll('input[name="todayFeeling"]').forEach((el) => el.dataset.key = "todayFeeling");
 buildOptions();
-
-/* ---------- REPORT ENGINE: explanatory formulation report ---------- */
 const LEVEL_TEXT = {
-  prominent:  {label:"Prominent",   cls:"lv-prominent"},
-  substantial:{label:"Substantial", cls:"lv-substantial"},
-  present:    {label:"Present",     cls:"lv-present"},
-  limited:    {label:"Limited",     cls:"lv-limited"}
+  prominent: { label: "Prominent", cls: "lv-prominent" },
+  substantial: { label: "Substantial", cls: "lv-substantial" },
+  present: { label: "Present", cls: "lv-present" },
+  limited: { label: "Limited", cls: "lv-limited" }
 };
-
 const DOMAIN_INFO = {
   "Social-evaluative threat": {
-    title:"Social worries and relationships with peers",
-    what:n=>`This area is about how safe ${n} feels around other people at school: worries about being watched, judged, embarrassed, left out or treated unkindly, as well as actual experiences with peers. School is a very social place. When being seen or heard feels threatening, staying away brings quick relief, which can make returning harder over time.`,
-    consider:n=>[`Avoid asking ${n} to answer, read aloud or present in front of the class without warning; agree a discreet way to ask for help.`,`Offer structured, supported options for unstructured times (clubs, a quiet space at break and lunch).`,`Explore any peer difficulties ${n} describes and follow anti-bullying procedures where needed.`,`Help build one or two safe peer connections (buddy, peer mentor, small-group work).`]
+    title: "Social worries and relationships with peers",
+    what: (n) => "This area is about how safe ".concat(n, " feels around other people at school: worries about being watched, judged, embarrassed, left out or treated unkindly, as well as actual experiences with peers. School is a very social place. When being seen or heard feels threatening, staying away brings quick relief, which can make returning harder over time."),
+    consider: (n) => ["Avoid asking ".concat(n, " to answer, read aloud or present in front of the class without warning; agree a discreet way to ask for help."), "Offer structured, supported options for unstructured times (clubs, a quiet space at break and lunch).", "Explore any peer difficulties ".concat(n, " describes and follow anti-bullying procedures where needed."), "Help build one or two safe peer connections (buddy, peer mentor, small-group work)."]
   },
   "Academic / performance threat": {
-    title:"Learning and performance worries",
-    what:n=>`This area is about worries linked to learning: not understanding the work, being put on the spot, getting things wrong, tests, and falling behind. These worries can sometimes reflect an underlying learning need (for example literacy, working memory or processing speed), or very high standards that ${n} sets for themselves.`,
-    consider:n=>[`Check for unidentified learning needs (e.g. literacy, working memory, processing speed).`,`Break tasks into smaller steps; give written instructions and worked examples.`,`Agree how missed work will be managed so catching up does not become a barrier to returning.`,`Offer low-pressure ways for ${n} to show learning and to ask for help privately.`]
+    title: "Learning and performance worries",
+    what: (n) => "This area is about worries linked to learning: not understanding the work, being put on the spot, getting things wrong, tests, and falling behind. These worries can sometimes reflect an underlying learning need (for example literacy, working memory or processing speed), or very high standards that ".concat(n, " sets for themselves."),
+    consider: (n) => ["Check for unidentified learning needs (e.g. literacy, working memory, processing speed).", "Break tasks into smaller steps; give written instructions and worked examples.", "Agree how missed work will be managed so catching up does not become a barrier to returning.", "Offer low-pressure ways for ".concat(n, " to show learning and to ask for help privately.")]
   },
   "Sensory / environmental load": {
-    title:"Sensory and environmental load",
-    what:n=>`This area is about how strongly ${n} is affected by the school environment (noise, crowds, lights, smells, touch, uniform) and what happens when it becomes too much. Sensory load builds up across the day and can lead to overwhelm, shutdown or exhaustion. Sensory differences are sometimes associated with neurodevelopmental differences, but these answers alone do not indicate a diagnosis.`,
-    consider:n=>[`Reduce sensory load, e.g. leaving lessons a few minutes early to avoid busy corridors, quieter seating, ear defenders.`,`Provide access to a low-stimulation space and planned movement or sensory breaks.`,`Review uniform, dining hall and assembly arrangements.`,`Consider an Occupational Therapy or sensory assessment if needs are marked.`]
+    title: "Sensory and environmental load",
+    what: (n) => "This area is about how strongly ".concat(n, " is affected by the school environment (noise, crowds, lights, smells, touch, uniform) and what happens when it becomes too much. Sensory load builds up across the day and can lead to overwhelm, shutdown or exhaustion. Sensory differences are sometimes associated with neurodevelopmental differences, but these answers alone do not indicate a diagnosis."),
+    consider: (n) => ["Reduce sensory load, e.g. leaving lessons a few minutes early to avoid busy corridors, quieter seating, ear defenders.", "Provide access to a low-stimulation space and planned movement or sensory breaks.", "Review uniform, dining hall and assembly arrangements.", "Consider an Occupational Therapy or sensory assessment if needs are marked."]
   },
   "Uncertainty / predictability": {
-    title:"Change, uncertainty and predictability",
-    what:n=>`This area is about how ${n} copes with change and with not knowing what will happen. Some young people find uncertainty very hard to tolerate. Unexpected changes can quickly raise anxiety, while knowing what to expect helps them feel safe and in control.`,
-    consider:n=>[`Give advance warning of changes (staff, rooms, timetable) wherever possible.`,`Use a visual or written timetable and preview new situations or rooms.`,`Provide a named adult who can explain plans and answer questions beforehand.`,`Gradually build tolerance of small, planned changes with support.`]
+    title: "Change, uncertainty and predictability",
+    what: (n) => "This area is about how ".concat(n, " copes with change and with not knowing what will happen. Some young people find uncertainty very hard to tolerate. Unexpected changes can quickly raise anxiety, while knowing what to expect helps them feel safe and in control."),
+    consider: (n) => ["Give advance warning of changes (staff, rooms, timetable) wherever possible.", "Use a visual or written timetable and preview new situations or rooms.", "Provide a named adult who can explain plans and answer questions beforehand.", "Gradually build tolerance of small, planned changes with support."]
   },
   "Masking / exhaustion": {
-    title:"Hiding feelings (masking) and exhaustion",
-    what:n=>`This area is about ${n} hiding how they really feel in order to cope or fit in, and the tiredness that can follow. Keeping feelings hidden takes a lot of effort. Young people who mask may seem fine in school but become exhausted, distressed or withdrawn at home, so adults in school may underestimate how hard things are.`,
-    consider:n=>[`Take reports of difficulty at home seriously, even if ${n} appears settled in school.`,`Build in recovery time and reduce demands when energy is low.`,`Create safe, low-pressure ways to share feelings (e.g. scaling, visual check-ins, written notes).`,`Keep an eye on sleep and energy levels.`]
+    title: "Hiding feelings (masking) and exhaustion",
+    what: (n) => "This area is about ".concat(n, " hiding how they really feel in order to cope or fit in, and the tiredness that can follow. Keeping feelings hidden takes a lot of effort. Young people who mask may seem fine in school but become exhausted, distressed or withdrawn at home, so adults in school may underestimate how hard things are."),
+    consider: (n) => ["Take reports of difficulty at home seriously, even if ".concat(n, " appears settled in school."), "Build in recovery time and reduce demands when energy is low.", "Create safe, low-pressure ways to share feelings (e.g. scaling, visual check-ins, written notes).", "Keep an eye on sleep and energy levels."]
   },
   "Attendance / avoidance cycle": {
-    title:"The attendance and avoidance cycle",
-    what:n=>`This area is about what happens around going to school and staying at home. When school feels threatening, staying at home often brings immediate relief. That relief makes staying away more likely next time, while worries about missed work and what others will think grow, so returning feels harder. Understanding this cycle helps adults plan a gradual, supported return rather than relying on pressure.`,
-    consider:n=>[`Agree an individual, gradual return plan with small, achievable steps that ${n} helps to design.`,`Plan together what ${n} can say if asked where they have been, and how missed work will be handled.`,`Keep a positive link with school during absence (e.g. regular contact from a key adult).`,`Focus on reducing the barriers identified in this report, not on sanctions alone.`]
+    title: "The attendance and avoidance cycle",
+    what: (n) => "This area is about what happens around going to school and staying at home. When school feels threatening, staying at home often brings immediate relief. That relief makes staying away more likely next time, while worries about missed work and what others will think grow, so returning feels harder. Understanding this cycle helps adults plan a gradual, supported return rather than relying on pressure.",
+    consider: (n) => ["Agree an individual, gradual return plan with small, achievable steps that ".concat(n, " helps to design."), "Plan together what ".concat(n, " can say if asked where they have been, and how missed work will be handled."), "Keep a positive link with school during absence (e.g. regular contact from a key adult).", "Focus on reducing the barriers identified in this report, not on sanctions alone."]
   },
   "Adult / relationship factors": {
-    title:"How adults respond",
-    what:n=>`This area is about how the responses of adults affect ${n}. The adults around a young person can make school feel much safer or, without meaning to, add to anxiety. The helpful responses ${n} chose are listed as strengths and protective factors; the results below are the responses ${n} finds unhelpful.`,
-    consider:n=>[`Share with staff the responses ${n} finds helpful and those that make things worse.`,`Identify a key adult who can offer regular, predictable check-ins.`,`Avoid public challenge, threats or sanctions for anxiety-driven behaviour.`,`Listen to, believe and validate ${n}'s experience.`]
+    title: "How adults respond",
+    what: (n) => "This area is about how the responses of adults affect ".concat(n, ". The adults around a young person can make school feel much safer or, without meaning to, add to anxiety. The helpful responses ").concat(n, " chose are listed as strengths and protective factors; the results below are the responses ").concat(n, " finds unhelpful."),
+    consider: (n) => ["Share with staff the responses ".concat(n, " finds helpful and those that make things worse."), "Identify a key adult who can offer regular, predictable check-ins.", "Avoid public challenge, threats or sanctions for anxiety-driven behaviour.", "Listen to, believe and validate ".concat(n, "'s experience.")]
   }
 };
-/* In the adult domain, only unhelpful responses count towards difficulty. */
 domains["Adult / relationship factors"].groups = ["unhelpfulAdults"];
-
-function arr(k){ return Array.isArray(answers[k]) ? answers[k].filter(v=>v!==RNS) : []; }
-function list(items, cls="rp-chips"){
-  return items.length ? `<div class="${cls}">${items.map(x=>`<span>${esc(x)}</span>`).join("")}</div>` : `<p class="rp-none">Nothing selected.</p>`;
+function arr(k) {
+  return Array.isArray(answers[k]) ? answers[k].filter((v) => v !== RNS) : [];
 }
-function joinNice(a){ return a.length<=1 ? (a[0]||"") : a.slice(0,-1).join(", ")+" and "+a[a.length-1]; }
-function interpret(level,n){
-  const A = PARENT ? "the parent/carer's answers" : `${n}'s answers`;
-  const view = PARENT ? "from the parent/carer's point of view" : `from ${n}'s point of view`;
+function list(items, cls = "rp-chips") {
+  return items.length ? '<div class="'.concat(cls, '">').concat(items.map((x) => "<span>".concat(esc(x), "</span>")).join(""), "</div>") : '<p class="rp-none">Nothing selected.</p>';
+}
+function joinNice(a) {
+  return a.length <= 1 ? a[0] || "" : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+}
+function interpret(level2, n) {
+  const A = PARENT ? "the parent/carer's answers" : "".concat(n, "'s answers");
+  const view = PARENT ? "from the parent/carer's point of view" : "from ".concat(n, "'s point of view");
   return {
-    prominent:`${A} point strongly to this area. It is likely to be one of the main things making school difficult for ${n} and should be a central part of the support plan.`,
-    substantial:`A clear pattern of answers in this area suggests it is an important contributor to ${n}'s difficulties with school.`,
-    present:`Some of ${A} relate to this area. It may be playing a part and is worth exploring further${PARENT?"":` in conversation with ${n}`}.`,
-    limited:`Few or no answers relate to this area, so ${view} it does not appear to be a main driver. This does not rule it out.`
-  }[level];
+    prominent: "".concat(A, " point strongly to this area. It is likely to be one of the main things making school difficult for ").concat(n, " and should be a central part of the support plan."),
+    substantial: "A clear pattern of answers in this area suggests it is an important contributor to ".concat(n, "'s difficulties with school."),
+    present: "Some of ".concat(A, " relate to this area. It may be playing a part and is worth exploring further").concat(PARENT ? "" : " in conversation with ".concat(n), "."),
+    limited: "Few or no answers relate to this area, so ".concat(view, " it does not appear to be a main driver. This does not rule it out.")
+  }[level2];
 }
-
-function strengthData(){
-  const R=(a,b)=>PARENT?b:a;
+function strengthData() {
+  const R = (a, b) => PARENT ? b : a;
   const groups = {
-    [R("What I am good at","What they are good at")]: arr("strengthsSkills"),
-    [R("How others would describe me","How others would describe them")]: arr("strengthsQualities"),
-    [R("Parts of school I like or find okay","Parts of school they like or find okay")]: arr("schoolLikes"),
+    [R("What I am good at", "What they are good at")]: arr("strengthsSkills"),
+    [R("How others would describe me", "How others would describe them")]: arr("strengthsQualities"),
+    [R("Parts of school I like or find okay", "Parts of school they like or find okay")]: arr("schoolLikes"),
     "Favourite subjects": arr("favSubjects"),
     "When school goes better": arr("betterTimes"),
-    [R("What I have tried that helps","What they have tried that helps")]: arr("copingTried"),
-    [R("What helps me calm down","What helps them calm down")]: arr("calmHelp"),
-    "Adults who make school feel safer": arr("safeAdults").filter(x=>x!=="No adults at school"),
+    [R("What I have tried that helps", "What they have tried that helps")]: arr("copingTried"),
+    [R("What helps me calm down", "What helps them calm down")]: arr("calmHelp"),
+    "Adults who make school feel safer": arr("safeAdults").filter((x) => x !== "No adults at school"),
     "What helpful adults do": arr("helpfulAdults"),
-    [R("My hopes","Hopes for school")]: arr("hopes")
+    [R("My hopes", "Hopes for school")]: arr("hopes")
   };
-  const total = Object.values(groups).reduce((t,g)=>t+g.length,0);
-  return {groups,total};
+  const total2 = Object.values(groups).reduce((t, g) => t + g.length, 0);
+  return { groups, total: total2 };
 }
-
-function buildReportHTML(){
+function buildReportHTML() {
+  var _a2, _b2, _c2;
   collectAnswers();
-  const R=(a,b)=>PARENT?b:a;
-  const n = (answers.name||"").trim().split(/\s+/)[0] || "the young person";
+  const R = (a, b) => PARENT ? b : a;
+  const n = (answers.name || "").trim().split(/\s+/)[0] || "the young person";
   const P = "the parent/carer";
-  const S = R(n,P);                                  // who is reporting
-  const Ss = R(`${n}'s`,"the parent/carer's");       // reporter possessive
+  const S = R(n, P);
+  const Ss = R("".concat(n, "'s"), "the parent/carer's");
   const fd = formulationData();
   const sd = strengthData();
-  const today = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  const ranked = Object.entries(fd).sort((a,b)=>b[1].score-a[1].score);
-  const main = ranked.filter(([,r])=>r.score>=5).map(([k])=>DOMAIN_INFO[k].title);
-  const some = ranked.filter(([,r])=>r.score>=2 && r.score<5).map(([k])=>DOMAIN_INFO[k].title);
-  const topQual = arr("strengthsQualities").filter(x=>x!=="I am not sure").slice(0,3), topSkill = arr("strengthsSkills").filter(x=>x!=="Something else").slice(0,3);
-  const parentWho = `${answers.parentName||"A parent/carer"}${answers.relationship?` (${answers.relationship.toLowerCase()})`:""}`;
-
-  /* overall summary paragraph */
-  let summary = R(`${n} completed this questionnaire on ${today}. `, `${parentWho} completed this questionnaire about ${n} on ${today}. `);
-  if(answers.attendance) summary += `${S} described ${R("their","" + n + "'s")} current attendance as: “${optLabel("attendance",answers.attendance)}”. `;
-  if(answers.anxietyRating!==undefined) summary += R(`${n} rated their anxiety about school at its strongest as ${answers.anxietyRating} out of 10. `, `${P} rated ${n}'s anxiety about school at its strongest as ${answers.anxietyRating} out of 10. `);
-  if(main.length) summary += `The areas that stand out most clearly from ${Ss} answers are ${joinNice(main.map(x=>x.toLowerCase()))}. `;
-  if(some.length) summary += `There are also some indicators relating to ${joinNice(some.map(x=>x.toLowerCase()))}. `;
-  if(!main.length && !some.length) summary += `No single area of difficulty stands out strongly from ${Ss} answers, which may itself be worth exploring. `;
-  if(topQual.length||topSkill.length){
-    summary += R(`${n} also identified real strengths`, `${P} also identified real strengths in ${n}`);
-    if(topQual.length) summary += `, describing ${R("themselves",n)} as ${joinNice(topQual.map(x=>x.toLowerCase()))}`;
-    if(topSkill.length) summary += `${topQual.length?",":""} and saying ${R("they are",n+" is")} good at ${joinNice(topSkill.map(x=>x.toLowerCase()))}`;
-    summary += `. `;
+  const today = (/* @__PURE__ */ new Date()).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const ranked = Object.entries(fd).sort((a, b) => b[1].score - a[1].score);
+  const main = ranked.filter(([, r]) => r.score >= 5).map(([k]) => DOMAIN_INFO[k].title);
+  const some = ranked.filter(([, r]) => r.score >= 2 && r.score < 5).map(([k]) => DOMAIN_INFO[k].title);
+  const topQual = arr("strengthsQualities").filter((x) => x !== "I am not sure").slice(0, 3), topSkill = arr("strengthsSkills").filter((x) => x !== "Something else").slice(0, 3);
+  const parentWho = "".concat(answers.parentName || "A parent/carer").concat(answers.relationship ? " (".concat(answers.relationship.toLowerCase(), ")") : "");
+  let summary = R("".concat(n, " completed this questionnaire on ").concat(today, ". "), "".concat(parentWho, " completed this questionnaire about ").concat(n, " on ").concat(today, ". "));
+  if (answers.attendance) summary += "".concat(S, " described ").concat(R("their", "" + n + "'s"), " current attendance as: \u201C").concat(optLabel("attendance", answers.attendance), "\u201D. ");
+  if (answers.anxietyRating !== void 0) summary += R("".concat(n, " rated their anxiety about school at its strongest as ").concat(answers.anxietyRating, " out of 10. "), "".concat(P, " rated ").concat(n, "'s anxiety about school at its strongest as ").concat(answers.anxietyRating, " out of 10. "));
+  if (main.length) summary += "The areas that stand out most clearly from ".concat(Ss, " answers are ").concat(joinNice(main.map((x) => x.toLowerCase())), ". ");
+  if (some.length) summary += "There are also some indicators relating to ".concat(joinNice(some.map((x) => x.toLowerCase())), ". ");
+  if (!main.length && !some.length) summary += "No single area of difficulty stands out strongly from ".concat(Ss, " answers, which may itself be worth exploring. ");
+  if (topQual.length || topSkill.length) {
+    summary += R("".concat(n, " also identified real strengths"), "".concat(P, " also identified real strengths in ").concat(n));
+    if (topQual.length) summary += ", describing ".concat(R("themselves", n), " as ").concat(joinNice(topQual.map((x) => x.toLowerCase())));
+    if (topSkill.length) summary += "".concat(topQual.length ? "," : "", " and saying ").concat(R("they are", n + " is"), " good at ").concat(joinNice(topSkill.map((x) => x.toLowerCase())));
+    summary += ". ";
   }
-  const better = arr("betterTimes").filter(x=>x!=="I cannot think of a time yet");
-  if(better.length) summary += `School goes better for ${n} when ${joinNice(better.slice(0,3).map(x=>x.replace(/^I /,"they ").replace(/^A /,"a ").replace(/^The /,"the ").replace(/^There /,"there ").replace(/^It /,"it ").replace(/^Something /,"something ")))}. `;
-  if(arr("topHelp").length) summary += `The changes ${S} feels would help most are: ${joinNice(arr("topHelp").map(x=>optLabel("topHelp",x).toLowerCase()))}. `;
-  if(answers.confidenceRating!==undefined) summary += `${S} rated ${R("their","their")} confidence that things can get better as ${answers.confidenceRating} out of 10.`;
-
-  /* flags */
+  const better = arr("betterTimes").filter((x) => x !== "I cannot think of a time yet");
+  if (better.length) summary += "School goes better for ".concat(n, " when ").concat(joinNice(better.slice(0, 3).map((x) => x.replace(/^I /, "they ").replace(/^A /, "a ").replace(/^The /, "the ").replace(/^There /, "there ").replace(/^It /, "it ").replace(/^Something /, "something "))), ". ");
+  if (arr("topHelp").length) summary += "The changes ".concat(S, " feels would help most are: ").concat(joinNice(arr("topHelp").map((x) => optLabel("topHelp", x).toLowerCase())), ". ");
+  if (answers.confidenceRating !== void 0) summary += "".concat(S, " rated ").concat(R("their", "their"), " confidence that things can get better as ").concat(answers.confidenceRating, " out of 10.");
   const flags = [];
-  if(["Yes","Maybe","Prefer to talk privately"].includes(answers.unsafe)) flags.push(`${S} has indicated a possible safety concern${R(", or would prefer to talk about safety privately"," about "+n+" at school, or would prefer to discuss this privately")}. <strong>Follow up promptly in line with safeguarding procedures.</strong>`);
-  if(arr("peerEvents").some(x=>["Someone has threatened me","Someone has hurt me","Someone has made me frightened"].includes(x))) flags.push(`${S} selected responses indicating possible threat, harm or fear involving peers.`);
-  if(answers.adultTalk==="Yes") flags.push(R(`${n} would like an adult to talk to them about: `,`${P} would like the Educational Psychologist to contact them about: `)+`${esc(joinNice(arr("talkAbout").map(x=>optLabel("talkAbout",x)))||"not specified")}.`);
-  if(arr("homeLater").includes("Going back feels even harder")) flags.push(`${Ss} answers suggest that absence is followed by increasing difficulty returning.`);
-  if(arr("overloadResponses").includes("I cannot speak")) flags.push(R(`${n} reports losing the ability to speak when overloaded or very anxious.`,`${P} reports that ${n} loses the ability to speak when overloaded or very anxious.`));
-  if(Number(answers.anxietyRating)>=9) flags.push(`${S} rated ${R("their",n+"'s")} anxiety at ${answers.anxietyRating}/10 at its strongest.`);
-  if(PARENT && arr("parentImpact").some(x=>["Worry about fines or legal action","Feeling blamed","Feeling unsupported"].includes(x))) flags.push(`${P} reports: ${esc(joinNice(arr("parentImpact").filter(x=>["Worry about fines or legal action","Feeling blamed","Feeling unsupported"].includes(x)).map(x=>x.toLowerCase())))}.`);
-
-  /* attendance cycle interpretation */
-  const relief = arr("homeFirst").some(x=>["Relieved","Calm","Safe","Less anxious","Less tired"].includes(x));
-  const later = arr("homeLater").some(x=>x.startsWith("I worry")||x.startsWith("I start worrying")||x==="Going back feels even harder"||x==="I feel more disconnected from school");
-  let cycleText = relief && later
-    ? `${Ss} answers fit the avoidance–relief cycle closely: staying at home brings ${n} some immediate relief, but worry about returning then builds. This suggests that absence is being maintained by anxiety, and that a gradual, well-supported return is likely to work better than pressure alone.`
-    : relief ? `${S} reports ${R("feeling","that "+n+" feels")} some relief when staying at home. This relief can make staying away more likely next time, so it is important that any return plan reduces the barriers identified.`
-    : later ? `${S} reports ${R("growing worry",n+" experiences growing worry")} after time away from school, which can make returning feel harder.`
-    : `${Ss} answers do not show a clear avoidance–relief pattern.`;
-
-  const domainCards = ranked.map(([k,r])=>{
+  if (["Yes", "Maybe", "Prefer to talk privately"].includes(answers.unsafe)) flags.push("".concat(S, " has indicated a possible safety concern").concat(R(", or would prefer to talk about safety privately", " about " + n + " at school, or would prefer to discuss this privately"), ". <strong>Follow up promptly in line with safeguarding procedures.</strong>"));
+  if (arr("peerEvents").some((x) => ["Someone has threatened me", "Someone has hurt me", "Someone has made me frightened"].includes(x))) flags.push("".concat(S, " selected responses indicating possible threat, harm or fear involving peers."));
+  if (answers.adultTalk === "Yes") flags.push(R("".concat(n, " would like an adult to talk to them about: "), "".concat(P, " would like the Educational Psychologist to contact them about: ")) + "".concat(esc(joinNice(arr("talkAbout").map((x) => optLabel("talkAbout", x))) || "not specified"), "."));
+  if (arr("homeLater").includes("Going back feels even harder")) flags.push("".concat(Ss, " answers suggest that absence is followed by increasing difficulty returning."));
+  if (arr("overloadResponses").includes("I cannot speak")) flags.push(R("".concat(n, " reports losing the ability to speak when overloaded or very anxious."), "".concat(P, " reports that ").concat(n, " loses the ability to speak when overloaded or very anxious.")));
+  if (Number(answers.anxietyRating) >= 9) flags.push("".concat(S, " rated ").concat(R("their", n + "'s"), " anxiety at ").concat(answers.anxietyRating, "/10 at its strongest."));
+  if (PARENT && arr("parentImpact").some((x) => ["Worry about fines or legal action", "Feeling blamed", "Feeling unsupported"].includes(x))) flags.push("".concat(P, " reports: ").concat(esc(joinNice(arr("parentImpact").filter((x) => ["Worry about fines or legal action", "Feeling blamed", "Feeling unsupported"].includes(x)).map((x) => x.toLowerCase()))), "."));
+  const relief = arr("homeFirst").some((x) => ["Relieved", "Calm", "Safe", "Less anxious", "Less tired"].includes(x));
+  const later = arr("homeLater").some((x) => x.startsWith("I worry") || x.startsWith("I start worrying") || x === "Going back feels even harder" || x === "I feel more disconnected from school");
+  let cycleText = relief && later ? "".concat(Ss, " answers fit the avoidance\u2013relief cycle closely: staying at home brings ").concat(n, " some immediate relief, but worry about returning then builds. This suggests that absence is being maintained by anxiety, and that a gradual, well-supported return is likely to work better than pressure alone.") : relief ? "".concat(S, " reports ").concat(R("feeling", "that " + n + " feels"), " some relief when staying at home. This relief can make staying away more likely next time, so it is important that any return plan reduces the barriers identified.") : later ? "".concat(S, " reports ").concat(R("growing worry", n + " experiences growing worry"), " after time away from school, which can make returning feel harder.") : "".concat(Ss, " answers do not show a clear avoidance\u2013relief pattern.");
+  const domainCards = ranked.map(([k, r]) => {
     const info = DOMAIN_INFO[k], lv = LEVEL_TEXT[r.level];
-    return `<div class="rp-domain">
-      <div class="rp-dhead"><h4>${esc(info.title)}</h4><span class="rp-badge ${lv.cls}">${lv.label}</span></div>
-      <div class="rp-bar"><div style="width:${Math.min(100,Math.round(r.score/12*100))}%"></div></div>
-      <p class="rp-small">${r.score} related answer${r.score===1?"":"s"} selected</p>
-      <h5>What this area means</h5><p>${esc(info.what(n))}</p>
-      <h5>What ${esc(S)} told us</h5>${list(r.hits.map(h=>optLabelAny(h)))}
-      <h5>What this may mean</h5><p>${esc(interpret(r.level,n))}</p>
-      ${r.level!=="limited" ? `<h5>Things to consider</h5><ul>${info.consider(n).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-    </div>`;
+    return '<div class="rp-domain">\n      <div class="rp-dhead"><h4>'.concat(esc(info.title), '</h4><span class="rp-badge ').concat(lv.cls, '">').concat(lv.label, '</span></div>\n      <div class="rp-bar"><div style="width:').concat(Math.min(100, Math.round(r.score / 12 * 100)), '%"></div></div>\n      <p class="rp-small">').concat(r.score, " related answer").concat(r.score === 1 ? "" : "s", " selected</p>\n      <h5>What this area means</h5><p>").concat(esc(info.what(n)), "</p>\n      <h5>What ").concat(esc(S), " told us</h5>").concat(list(r.hits.map((h) => optLabelAny(h))), "\n      <h5>What this may mean</h5><p>").concat(esc(interpret(r.level, n)), "</p>\n      ").concat(r.level !== "limited" ? "<h5>Things to consider</h5><ul>".concat(info.consider(n).map((x) => "<li>".concat(esc(x), "</li>")).join(""), "</ul>") : "", "\n    </div>");
   }).join("");
-
-  const L = (k)=>arr(k).map(v=>optLabel(k,v));
-  const strengthBlocks = Object.entries(sd.groups).map(([t,v])=>`<div class="rp-sblock"><h5>${esc(t)}</h5>${list(v.map(x=>optLabelAny(x)),"rp-chips rp-green")}</div>`).join("");
-  const helpBlocks = Object.keys(helpSections).map(t=>{ const v=arr("help_"+t); return v.length?`<div class="rp-sblock"><h5>${esc(t)}</h5>${list(v.map(x=>optLabelAny(x)))}</div>`:""; }).join("");
-
-  const row = (k,v)=>`<tr><th>${k}</th><td>${esc(v||"Not provided")}</td></tr>`;
-  const consentOK = ["consentUnderstand","consentUse","consentShare","consentAgree"].every(k=>answers[k]==="Yes");
-
-  const familyBlock = PARENT ? `
-  <h2>9. Family perspective</h2>
-  <p>This section gives the parent/carer's view of the history of the difficulties, what has already been tried, and the impact on the family. It provides important context for understanding ${esc(n)}'s needs and planning support together.</p>
-  <table class="rp-table">
-    ${row("How long difficulties have been going on",answers.duration)}
-    ${row("Approximate current attendance",answers.attendancePct)}
-  </table>
-  <div class="rp-sgrid">
-    <div class="rp-sblock"><h5>What has been tried at home</h5>${list(arr("parentTried"))}</div>
-    <div class="rp-sblock"><h5>Support school has put in place</h5>${list(arr("parentSchoolSupport"))}</div>
-    <div class="rp-sblock"><h5>Impact on the family</h5>${list(arr("parentImpact"))}</div>
-  </div>
-  ${answers.parentHealth?`<h5>Diagnoses, assessments or health needs</h5><p class="rp-quote">“${esc(answers.parentHealth)}”</p>`:""}
-  ${answers.parentView?`<h5>What the parent/carer thinks would make the biggest difference</h5><p class="rp-quote">“${esc(answers.parentView)}”</p>`:""}
-  ${answers.parentHopes?`<h5>The parent/carer's hopes for ${esc(n)}</h5><p class="rp-quote">“${esc(answers.parentHopes)}”</p>`:""}` : "";
-
-  const out = `<article class="rp">
-  <div class="rp-cover">
-    <img class="pops-logo rp-logo" src="${POPS_LOGO}" alt="Positive Outcomes Psychology Service">
-    <h1>${R("My School Voice","My School Voice – Parent/Carer View")}</h1>
-    <p class="rp-sub">${R("In my own words: my strengths, my experience of school and what helps",`A parent/carer's view of ${esc(n)}'s strengths, experience of school and what helps`)}</p>
-  </div>
-
-  <table class="rp-table">
-    ${PARENT?row("Completed by",parentWho):""}
-    ${row(R("Name","Child's name"),answers.name)}${row("Age",answers.age)}${row("School year",answers.year)}${row("School",answers.school)}
-    ${row("Current attendance",answers.attendance?optLabel("attendance",answers.attendance):"")}${row(R("Young person's email","Parent/carer's email"),answers.yourEmail)}${row("Date completed",today)}
-    <tr><th>Permission</th><td>${consentOK?`Given – all four statements agreed (${esc(answers.consentTime||today)})`:"Not fully recorded"}</td></tr>
-    ${row(R("Feeling about the questionnaire","How the child is feeling about school"),answers.todayFeeling?optLabel("todayFeeling",answers.todayFeeling):"")}
-    <tr><th>Sent to</th><td>Educational Psychologist, popsUKoffice@gmail.com</td></tr>
-  </table>
-
-  <h2>1. About this report</h2>
-  <p>${R(`This report summarises ${esc(n)}'s own views about school: their strengths, what makes school difficult, what happens around attendance, and what ${esc(n)} feels would help. The questionnaire is designed to capture the young person's voice as part of understanding emotionally based school non-attendance (EBSNA).`,
-        `This report summarises a parent/carer's view of ${esc(n)}'s experience of school: ${esc(n)}'s strengths, what makes school difficult, what happens around attendance, and what the parent/carer feels would help. It is the parent/carer version of the My School Voice questionnaire, designed to sit alongside the young person's own responses as part of understanding emotionally based school non-attendance (EBSNA).`)}</p>
-  <p>${esc(R(n+"'s","The parent/carer's"))} answers are grouped into <strong>seven areas</strong> that research and practice show often contribute to anxiety about school. For each area the report explains what it means, shows what ${esc(S)} said, and gives a level based on how many related answers were chosen:</p>
-  <table class="rp-key"><tr><td><span class="rp-badge lv-prominent">Prominent</span></td><td>9 or more related answers – likely a central part of the picture</td></tr>
-  <tr><td><span class="rp-badge lv-substantial">Substantial</span></td><td>5–8 related answers – an important contributor</td></tr>
-  <tr><td><span class="rp-badge lv-present">Present</span></td><td>2–4 related answers – worth exploring further</td></tr>
-  <tr><td><span class="rp-badge lv-limited">Limited</span></td><td>0–1 related answers – not a main driver from ${R("the young person's","the parent/carer's")} view</td></tr></table>
-  <p class="rp-note"><strong>Important:</strong> this is a structured summary of ${R("self-reported answers","a parent/carer's answers")}, not a diagnosis or a standardised score. It should be interpreted by the Educational Psychologist alongside ${R("the views of parents/carers and school","the young person's own views, school views")}, attendance information and other assessment.${PARENT?" Where the young person has also completed My School Voice, comparing the two reports can show where views agree and where they differ – both are valuable.":""}</p>
-
-  <h2>2. Summary</h2>
-  <div class="rp-summary"><p>${esc(summary)}</p></div>
-  <div class="rp-glance">
-    <div><span class="rp-num">${answers.anxietyRating ?? "–"}<small>/10</small></span>Anxiety at its strongest</div>
-    <div><span class="rp-num">${answers.copingRating ?? "–"}<small>/10</small></span>Getting through a hard day</div>
-    <div><span class="rp-num">${answers.confidenceRating ?? "–"}<small>/10</small></span>Confidence things can improve</div>
-    <div><span class="rp-num">${sd.total}</span>Strengths and positives identified</div>
-  </div>
-  ${flags.length?`<div class="rp-flags"><h4>⚠ Follow-up flags</h4><ul>${flags.map(x=>`<li>${x}</li>`).join("")}</ul></div>`:""}
-
-  <h2>3. Strengths and protective factors</h2>
-  <p>Strengths and protective factors are the things that are going well for ${esc(n)}: what ${esc(n)} is good at and enjoys, and the people and strategies that already help. They are the foundation of any support plan, because support works best when it builds on what a young person can already do and cares about. Times when school “goes a bit better” are especially useful: they show what is already working and what could be done more often.</p>
-  <div class="rp-sgrid">${strengthBlocks}</div>
-  ${answers.hobbies?`<h5>Interests outside school</h5><p class="rp-quote">“${esc(answers.hobbies)}”</p>`:""}
-  ${answers.proudOf?`<h5>${R(`Something ${esc(n)} is proud of`,`Something to be proud of about ${esc(n)}`)}</h5><p class="rp-quote">“${esc(answers.proudOf)}”</p>`:""}
-  ${answers.futureDream?`<h5>Hopes for when ${esc(n)} is older</h5><p class="rp-quote">“${esc(answers.futureDream)}”</p>`:""}
-  ${arr("smallStep").length?`<h5>A small step ${esc(S)} thinks might help next week</h5>${list(L("smallStep"),"rp-chips rp-green")}`:""}
-
-  <h2>4. Understanding the difficulties – area by area</h2>
-  <p>The seven areas are listed from most to least prominent in ${esc(Ss)} answers.</p>
-  ${domainCards}
-
-  <h2>5. The attendance cycle</h2>
-  <p>${esc(cycleText)}</p>
-  <div class="rp-sgrid">
-    <div class="rp-sblock"><h5>When told it is time to go</h5>${list(L("goFactors"))}</div>
-    <div class="rp-sblock"><h5>How ${esc(n)} feels at first when staying home</h5>${list(L("homeFirst"))}</div>
-    <div class="rp-sblock"><h5>What happens later</h5>${list(L("homeLater"))}</div>
-    <div class="rp-sblock"><h5>Barriers to returning</h5>${list(L("returnDifficult"))}</div>
-  </div>
-
-  <h2>6. Anxiety and anticipation</h2>
-  <p>Anxiety about school often starts well before the school day. What happens the night before and in the morning shows how early the worry begins and what ${esc(n)} expects might go wrong.</p>
-  <div class="rp-sgrid">
-    <div class="rp-sblock"><h5>The night before</h5>${list(L("nightFactors"))}</div>
-    <div class="rp-sblock"><h5>Main worries</h5>${list(L("worryFactors"))}</div>
-    <div class="rp-sblock"><h5>Difficult parts of the morning</h5>${list(L("morningFactors"))}</div>
-    <div class="rp-sblock"><h5>Difficult parts of arriving</h5>${list(L("arrivalFactors"))}</div>
-    <div class="rp-sblock"><h5>What would make arriving easier</h5>${list(L("arrivalHelp"),"rp-chips rp-green")}</div>
-    <div class="rp-sblock"><h5>When anxiety is very high, ${esc(n)} may…</h5>${list(L("highAnxiety"))}</div>
-  </div>
-  <p class="rp-small">When difficulties began: ${esc(answers.storyWhen||"not answered")} · Sudden change: ${esc(answers.suddenChange||"not answered")} · Factors at the time: ${esc(joinNice(arr("storyFactors"))||"none selected")}</p>
-
-  <h2>7. ${R(`${esc(n)}'s voice: what would help`,`The parent/carer's view: what would help`)}</h2>
-  <div class="rp-sgrid">
-    <div class="rp-sblock"><h5>Top three things that make school hardest</h5>${list(L("topHard"))}</div>
-    <div class="rp-sblock"><h5>Top three things that would help most</h5>${list(L("topHelp"),"rp-chips rp-green")}</div>
-    <div class="rp-sblock"><h5>${R(`What ${esc(n)} wants adults to understand`,`What the parent/carer most wants adults to understand about ${esc(n)}`)}</h5>${list(L("importantThings"))}</div>
-  </div>
-  ${helpBlocks?`<h5>What would make school feel possible</h5><div class="rp-sgrid">${helpBlocks}</div>`:""}
-  ${answers.anythingElse?`<h5>${R(`In ${esc(n)}'s own words`,"In the parent/carer's own words")}</h5><p class="rp-quote">“${esc(answers.anythingElse)}”</p>`:""}
-
-  <h2>8. Suggested next steps</h2>
-  <ul>
-    ${R(`<li>Share and discuss this profile with ${esc(n)}, checking that it feels accurate, and agree what can be shared with whom.</li>
-    <li>Gather parent/carer and school views and attendance information to build a shared understanding.</li>`,
-    `<li>Discuss this profile with the parent/carer and, where possible, compare it with ${esc(n)}'s own My School Voice responses – noting where views agree and differ.</li>
-    <li>Gather school views and attendance information to build a shared understanding.</li>`)}
-    <li>Build the support plan on ${esc(n)}'s strengths and on what is already working${sd.groups["When school goes better"].length?` (for example: ${esc(joinNice(sd.groups["When school goes better"].slice(0,3).map(x=>optLabelAny(x))).toLowerCase())})`:""}.</li>
-    <li>Prioritise the areas rated <em>prominent</em> or <em>substantial</em>, using the “things to consider” above as starting points.</li>
-    <li>Agree a gradual, individual plan with small steps, a key adult and regular reviews${PARENT?", with the family as partners in the plan":""}.</li>
-  </ul>
-  ${familyBlock}
-
-  ${buildResponsesHTML(PARENT?10:9)}
-
-  <p class="rp-foot">Positive Outcomes Psychology Service · popsUKoffice@gmail.com<br>© ${new Date().getFullYear()} Positive Outcomes Psychology Services Ltd (POPS UK). All rights reserved. Confidential: share only with those involved in supporting the young person.</p>
-</article>`;
-  return out.replace(/(^|[.!?:]\s+|>\s*|“|<h[1-5]>\s*\d*\.?\s*)the (young person|parent\/carer)/g,(m,p,w)=>p+"The "+w);
+  const L = (k) => arr(k).map((v) => optLabel(k, v));
+  const strengthBlocks = Object.entries(sd.groups).map(([t, v]) => '<div class="rp-sblock"><h5>'.concat(esc(t), "</h5>").concat(list(v.map((x) => optLabelAny(x)), "rp-chips rp-green"), "</div>")).join("");
+  const helpBlocks = Object.keys(helpSections).map((t) => {
+    const v = arr("help_" + t);
+    return v.length ? '<div class="rp-sblock"><h5>'.concat(esc(t), "</h5>").concat(list(v.map((x) => optLabelAny(x))), "</div>") : "";
+  }).join("");
+  const row = (k, v) => "<tr><th>".concat(k, "</th><td>").concat(esc(v || "Not provided"), "</td></tr>");
+  const consentOK = ["consentUnderstand", "consentUse", "consentShare", "consentAgree"].every((k) => answers[k] === "Yes");
+  const familyBlock = PARENT ? "\n  <h2>9. Family perspective</h2>\n  <p>This section gives the parent/carer's view of the history of the difficulties, what has already been tried, and the impact on the family. It provides important context for understanding ".concat(esc(n), '\'s needs and planning support together.</p>\n  <table class="rp-table">\n    ').concat(row("How long difficulties have been going on", answers.duration), "\n    ").concat(row("Approximate current attendance", answers.attendancePct), '\n  </table>\n  <div class="rp-sgrid">\n    <div class="rp-sblock"><h5>What has been tried at home</h5>').concat(list(arr("parentTried")), '</div>\n    <div class="rp-sblock"><h5>Support school has put in place</h5>').concat(list(arr("parentSchoolSupport")), '</div>\n    <div class="rp-sblock"><h5>Impact on the family</h5>').concat(list(arr("parentImpact")), "</div>\n  </div>\n  ").concat(answers.parentHealth ? '<h5>Diagnoses, assessments or health needs</h5><p class="rp-quote">\u201C'.concat(esc(answers.parentHealth), "\u201D</p>") : "", "\n  ").concat(answers.parentView ? '<h5>What the parent/carer thinks would make the biggest difference</h5><p class="rp-quote">\u201C'.concat(esc(answers.parentView), "\u201D</p>") : "", "\n  ").concat(answers.parentHopes ? "<h5>The parent/carer's hopes for ".concat(esc(n), '</h5><p class="rp-quote">\u201C').concat(esc(answers.parentHopes), "\u201D</p>") : "") : "";
+  const out = '<article class="rp">\n  <div class="rp-cover">\n    <img class="pops-logo rp-logo" src="'.concat(POPS_LOGO, '" alt="Positive Outcomes Psychology Service">\n    <h1>').concat(R("My School Voice", "My School Voice \u2013 Parent/Carer View"), '</h1>\n    <p class="rp-sub">').concat(R("In my own words: my strengths, my experience of school and what helps", "A parent/carer's view of ".concat(esc(n), "'s strengths, experience of school and what helps")), '</p>\n  </div>\n\n  <table class="rp-table">\n    ').concat(PARENT ? row("Completed by", parentWho) : "", "\n    ").concat(row(R("Name", "Child's name"), answers.name)).concat(row("Age", answers.age)).concat(row("School year", answers.year)).concat(row("School", answers.school), "\n    ").concat(row("Current attendance", answers.attendance ? optLabel("attendance", answers.attendance) : "")).concat(row(R("Young person's email", "Parent/carer's email"), answers.yourEmail)).concat(row("Date completed", today), "\n    <tr><th>Permission</th><td>").concat(consentOK ? "Given \u2013 all four statements agreed (".concat(esc(answers.consentTime || today), ")") : "Not fully recorded", "</td></tr>\n    ").concat(row(R("Feeling about the questionnaire", "How the child is feeling about school"), answers.todayFeeling ? optLabel("todayFeeling", answers.todayFeeling) : ""), "\n    <tr><th>Sent to</th><td>Educational Psychologist, popsUKoffice@gmail.com</td></tr>\n  </table>\n\n  <h2>1. About this report</h2>\n  <p>").concat(R(
+    "This report summarises ".concat(esc(n), "'s own views about school: their strengths, what makes school difficult, what happens around attendance, and what ").concat(esc(n), " feels would help. The questionnaire is designed to capture the young person's voice as part of understanding emotionally based school non-attendance (EBSNA)."),
+    "This report summarises a parent/carer's view of ".concat(esc(n), "'s experience of school: ").concat(esc(n), "'s strengths, what makes school difficult, what happens around attendance, and what the parent/carer feels would help. It is the parent/carer version of the My School Voice questionnaire, designed to sit alongside the young person's own responses as part of understanding emotionally based school non-attendance (EBSNA).")
+  ), "</p>\n  <p>").concat(esc(R(n + "'s", "The parent/carer's")), " answers are grouped into <strong>seven areas</strong> that research and practice show often contribute to anxiety about school. For each area the report explains what it means, shows what ").concat(esc(S), ' said, and gives a level based on how many related answers were chosen:</p>\n  <table class="rp-key"><tr><td><span class="rp-badge lv-prominent">Prominent</span></td><td>9 or more related answers \u2013 likely a central part of the picture</td></tr>\n  <tr><td><span class="rp-badge lv-substantial">Substantial</span></td><td>5\u20138 related answers \u2013 an important contributor</td></tr>\n  <tr><td><span class="rp-badge lv-present">Present</span></td><td>2\u20134 related answers \u2013 worth exploring further</td></tr>\n  <tr><td><span class="rp-badge lv-limited">Limited</span></td><td>0\u20131 related answers \u2013 not a main driver from ').concat(R("the young person's", "the parent/carer's"), ' view</td></tr></table>\n  <p class="rp-note"><strong>Important:</strong> this is a structured summary of ').concat(R("self-reported answers", "a parent/carer's answers"), ", not a diagnosis or a standardised score. It should be interpreted by the Educational Psychologist alongside ").concat(R("the views of parents/carers and school", "the young person's own views, school views"), ", attendance information and other assessment.").concat(PARENT ? " Where the young person has also completed My School Voice, comparing the two reports can show where views agree and where they differ \u2013 both are valuable." : "", '</p>\n\n  <h2>2. Summary</h2>\n  <div class="rp-summary"><p>').concat(esc(summary), '</p></div>\n  <div class="rp-glance">\n    <div><span class="rp-num">').concat((_a2 = answers.anxietyRating) != null ? _a2 : "\u2013", '<small>/10</small></span>Anxiety at its strongest</div>\n    <div><span class="rp-num">').concat((_b2 = answers.copingRating) != null ? _b2 : "\u2013", '<small>/10</small></span>Getting through a hard day</div>\n    <div><span class="rp-num">').concat((_c2 = answers.confidenceRating) != null ? _c2 : "\u2013", '<small>/10</small></span>Confidence things can improve</div>\n    <div><span class="rp-num">').concat(sd.total, "</span>Strengths and positives identified</div>\n  </div>\n  ").concat(flags.length ? '<div class="rp-flags"><h4>\u26A0 Follow-up flags</h4><ul>'.concat(flags.map((x) => "<li>".concat(x, "</li>")).join(""), "</ul></div>") : "", "\n\n  <h2>3. Strengths and protective factors</h2>\n  <p>Strengths and protective factors are the things that are going well for ").concat(esc(n), ": what ").concat(esc(n), ' is good at and enjoys, and the people and strategies that already help. They are the foundation of any support plan, because support works best when it builds on what a young person can already do and cares about. Times when school \u201Cgoes a bit better\u201D are especially useful: they show what is already working and what could be done more often.</p>\n  <div class="rp-sgrid">').concat(strengthBlocks, "</div>\n  ").concat(answers.hobbies ? '<h5>Interests outside school</h5><p class="rp-quote">\u201C'.concat(esc(answers.hobbies), "\u201D</p>") : "", "\n  ").concat(answers.proudOf ? "<h5>".concat(R("Something ".concat(esc(n), " is proud of"), "Something to be proud of about ".concat(esc(n))), '</h5><p class="rp-quote">\u201C').concat(esc(answers.proudOf), "\u201D</p>") : "", "\n  ").concat(answers.futureDream ? "<h5>Hopes for when ".concat(esc(n), ' is older</h5><p class="rp-quote">\u201C').concat(esc(answers.futureDream), "\u201D</p>") : "", "\n  ").concat(arr("smallStep").length ? "<h5>A small step ".concat(esc(S), " thinks might help next week</h5>").concat(list(L("smallStep"), "rp-chips rp-green")) : "", "\n\n  <h2>4. Understanding the difficulties \u2013 area by area</h2>\n  <p>The seven areas are listed from most to least prominent in ").concat(esc(Ss), " answers.</p>\n  ").concat(domainCards, "\n\n  <h2>5. The attendance cycle</h2>\n  <p>").concat(esc(cycleText), '</p>\n  <div class="rp-sgrid">\n    <div class="rp-sblock"><h5>When told it is time to go</h5>').concat(list(L("goFactors")), '</div>\n    <div class="rp-sblock"><h5>How ').concat(esc(n), " feels at first when staying home</h5>").concat(list(L("homeFirst")), '</div>\n    <div class="rp-sblock"><h5>What happens later</h5>').concat(list(L("homeLater")), '</div>\n    <div class="rp-sblock"><h5>Barriers to returning</h5>').concat(list(L("returnDifficult")), "</div>\n  </div>\n\n  <h2>6. Anxiety and anticipation</h2>\n  <p>Anxiety about school often starts well before the school day. What happens the night before and in the morning shows how early the worry begins and what ").concat(esc(n), ' expects might go wrong.</p>\n  <div class="rp-sgrid">\n    <div class="rp-sblock"><h5>The night before</h5>').concat(list(L("nightFactors")), '</div>\n    <div class="rp-sblock"><h5>Main worries</h5>').concat(list(L("worryFactors")), '</div>\n    <div class="rp-sblock"><h5>Difficult parts of the morning</h5>').concat(list(L("morningFactors")), '</div>\n    <div class="rp-sblock"><h5>Difficult parts of arriving</h5>').concat(list(L("arrivalFactors")), '</div>\n    <div class="rp-sblock"><h5>What would make arriving easier</h5>').concat(list(L("arrivalHelp"), "rp-chips rp-green"), '</div>\n    <div class="rp-sblock"><h5>When anxiety is very high, ').concat(esc(n), " may\u2026</h5>").concat(list(L("highAnxiety")), '</div>\n  </div>\n  <p class="rp-small">When difficulties began: ').concat(esc(answers.storyWhen || "not answered"), " \xB7 Sudden change: ").concat(esc(answers.suddenChange || "not answered"), " \xB7 Factors at the time: ").concat(esc(joinNice(arr("storyFactors")) || "none selected"), "</p>\n\n  <h2>7. ").concat(R("".concat(esc(n), "'s voice: what would help"), "The parent/carer's view: what would help"), '</h2>\n  <div class="rp-sgrid">\n    <div class="rp-sblock"><h5>Top three things that make school hardest</h5>').concat(list(L("topHard")), '</div>\n    <div class="rp-sblock"><h5>Top three things that would help most</h5>').concat(list(L("topHelp"), "rp-chips rp-green"), '</div>\n    <div class="rp-sblock"><h5>').concat(R("What ".concat(esc(n), " wants adults to understand"), "What the parent/carer most wants adults to understand about ".concat(esc(n))), "</h5>").concat(list(L("importantThings")), "</div>\n  </div>\n  ").concat(helpBlocks ? '<h5>What would make school feel possible</h5><div class="rp-sgrid">'.concat(helpBlocks, "</div>") : "", "\n  ").concat(answers.anythingElse ? "<h5>".concat(R("In ".concat(esc(n), "'s own words"), "In the parent/carer's own words"), '</h5><p class="rp-quote">\u201C').concat(esc(answers.anythingElse), "\u201D</p>") : "", "\n\n  <h2>8. Suggested next steps</h2>\n  <ul>\n    ").concat(R(
+    "<li>Share and discuss this profile with ".concat(esc(n), ", checking that it feels accurate, and agree what can be shared with whom.</li>\n    <li>Gather parent/carer and school views and attendance information to build a shared understanding.</li>"),
+    "<li>Discuss this profile with the parent/carer and, where possible, compare it with ".concat(esc(n), "'s own My School Voice responses \u2013 noting where views agree and differ.</li>\n    <li>Gather school views and attendance information to build a shared understanding.</li>")
+  ), "\n    <li>Build the support plan on ").concat(esc(n), "'s strengths and on what is already working").concat(sd.groups["When school goes better"].length ? " (for example: ".concat(esc(joinNice(sd.groups["When school goes better"].slice(0, 3).map((x) => optLabelAny(x))).toLowerCase()), ")") : "", ".</li>\n    <li>Prioritise the areas rated <em>prominent</em> or <em>substantial</em>, using the \u201Cthings to consider\u201D above as starting points.</li>\n    <li>Agree a gradual, individual plan with small steps, a key adult and regular reviews").concat(PARENT ? ", with the family as partners in the plan" : "", ".</li>\n  </ul>\n  ").concat(familyBlock, "\n\n  ").concat(buildResponsesHTML(PARENT ? 10 : 9), '\n\n  <p class="rp-foot">Positive Outcomes Psychology Service \xB7 popsUKoffice@gmail.com<br>\xA9 ').concat((/* @__PURE__ */ new Date()).getFullYear(), " Positive Outcomes Psychology Services Ltd (POPS UK). All rights reserved. Confidential: share only with those involved in supporting the young person.</p>\n</article>");
+  return out.replace(/(^|[.!?:]\s+|>\s*|“|<h[1-5]>\s*\d*\.?\s*)the (young person|parent\/carer)/g, (m, p, w) => p + "The " + w);
 }
-
-
-/* Plain-text version (for email / clipboard) generated from the same report */
-function makeReportText(){
+function makeReportText() {
   const tmp = document.createElement("div");
   tmp.className = "rp-offscreen";
   tmp.innerHTML = buildReportHTML();
-  tmp.querySelectorAll(".rp-chips").forEach(c=>{ c.textContent = [...c.children].map(s=>"• "+s.textContent).join("\n"); });
-  tmp.querySelectorAll("h2").forEach(h=>h.textContent = "\n" + h.textContent.toUpperCase());
-  tmp.querySelectorAll(".rp-badge").forEach(b=>b.textContent = " ["+b.textContent+"]");
-  tmp.querySelectorAll("img,.rp-bar").forEach(x=>x.remove());
+  tmp.querySelectorAll(".rp-chips").forEach((c) => {
+    c.textContent = [...c.children].map((s) => "\u2022 " + s.textContent).join("\n");
+  });
+  tmp.querySelectorAll("h2").forEach((h) => h.textContent = "\n" + h.textContent.toUpperCase());
+  tmp.querySelectorAll(".rp-badge").forEach((b) => b.textContent = " [" + b.textContent + "]");
+  tmp.querySelectorAll("img,.rp-bar").forEach((x) => x.remove());
   document.body.appendChild(tmp);
-  const text = tmp.innerText.replace(/\n{3,}/g,"\n\n").trim();
+  const text = tmp.innerText.replace(/\n{3,}/g, "\n\n").trim();
   tmp.remove();
   return text;
 }
-
-function renderReport(){
+function renderReport() {
   const view = document.getElementById("reportView");
-  if(view) view.innerHTML = buildReportHTML();
+  if (view) view.innerHTML = buildReportHTML();
 }
-
-const REPORT_CSS = `
-.rp{font-family:'Montserrat',Arial,sans-serif;color:#1b3450;line-height:1.55;font-size:14px}
-.rp-cover{text-align:center;padding:6px 0 18px;border-bottom:4px solid #27b597;margin-bottom:18px}
-.rp-logo{width:100%;max-width:420px;border-radius:12px}
-.rp h1{color:#214a73;font-size:26px;margin:14px 0 4px}
-.rp-sub{color:#27b597;font-weight:700;margin:0}
-.rp h2{color:#214a73;font-size:20px;margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #d8e3ea}
-.rp h2::after{display:none}
-.rp h4{margin:0;color:#214a73;font-size:16px}
-.rp h5{margin:14px 0 6px;color:#214a73;font-size:13.5px}
-.rp p{margin:6px 0}
-.rp-table,.rp-key{width:100%;border-collapse:collapse;margin:8px 0}
-.rp-table th,.rp-table td{border:1px solid #d8e3ea;padding:7px 10px;text-align:left;vertical-align:top;font-size:13.5px}
-.rp-table th{background:#e8f7f3;color:#214a73;width:34%}
-.rp-key td{padding:4px 8px;font-size:13px}
-.rp-note{background:#fffbe0;border-left:5px solid #e0b800;padding:10px 12px;border-radius:8px}
-.rp-summary{background:#e8f7f3;border-left:5px solid #27b597;padding:12px 14px;border-radius:8px}
-.rp-glance{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
-.rp-glance div{background:#fff;border:1px solid #d8e3ea;border-radius:10px;padding:10px;text-align:center;font-size:12px;color:#617486}
-.rp-num{display:block;font-size:26px;font-weight:800;color:#214a73}.rp-num small{font-size:13px;color:#617486}
-.rp-flags{background:#fdf0f0;border-left:5px solid #b54a4a;padding:10px 14px;border-radius:8px;margin:12px 0}
-.rp-flags h4{color:#b54a4a}
-.rp-domain{border:1px solid #d8e3ea;border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff;break-inside:avoid}
-.rp-dhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.rp-badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
-.lv-prominent{background:#214a73;color:#fff}.lv-substantial{background:#27b597;color:#fff}
-.lv-present{background:#fee000;color:#1b3450}.lv-limited{background:#e8eef2;color:#617486}
-.rp-bar{height:8px;background:#e8eef2;border-radius:10px;margin:10px 0 2px;overflow:hidden}
-.rp-bar div{height:100%;background:linear-gradient(90deg,#27b597,#214a73)}
-.rp-small{font-size:12px;color:#617486}
-.rp-chips{display:flex;flex-wrap:wrap;gap:6px}
-.rp-chips span{background:#eef3f7;border-radius:99px;padding:3px 10px;font-size:12.5px}
-.rp-green span{background:#e8f7f3;color:#1d6f5d}
-.rp-none{font-size:12.5px;color:#8a9aa8;font-style:italic}
-.rp-sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 16px}
-.rp-quote{font-style:italic;background:#f7fafb;border-left:4px solid #27b597;padding:8px 12px;border-radius:6px}
-.rp ul{padding-left:20px;margin:6px 0}.rp li{margin:3px 0}
-.rp-foot{margin-top:28px;padding-top:10px;border-top:2px solid #d8e3ea;font-size:11.5px;color:#617486;text-align:center}
-.rp-offscreen{position:absolute;left:-10000px;top:0;width:800px}
-.rp *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-@media print{
-  @page{size:A4;margin:14mm 12mm}
-  .rp{font-size:11.5px}
-  .rp-logo{max-width:300px}
-  .rp h2{break-after:avoid;page-break-after:avoid}
-  .rp h4,.rp h5{break-after:avoid;page-break-after:avoid}
-  .rp-domain,.rp-sblock,.rp-glance,.rp-summary,.rp-flags,.rp-note,.rp-key,.rp-table,.rp-resp tr,.rp-quote{break-inside:avoid;page-break-inside:avoid}
-  .rp-domain{box-shadow:none}
-  .rp-sgrid{grid-template-columns:1fr 1fr}
-}
-`;
-(function(){ const st=document.createElement("style"); st.textContent = REPORT_CSS + `
-.rp-resp{width:100%;border-collapse:collapse;margin:6px 0 14px}
-.rp-resp th,.rp-resp td{border:1px solid #d8e3ea;padding:6px 9px;text-align:left;vertical-align:top;font-size:12.5px}
-.rp-resp th{width:48%;background:#f7fafb;color:#214a73;font-weight:600}
-.rp-resp td.na{color:#8a9aa8;font-style:italic}
-@media print{
-  header,footer,main>section:not(.print-me){display:none!important}
-  main>section.print-me>*:not(.report-full){display:none!important}
-  main>section.print-me{border:0;box-shadow:none;padding:0;margin:0}
-  .report-full{border:0;padding:0}.report-full>h3,.report-full>p{display:none}
-  body{background:#fff}.rp-domain{break-inside:avoid}
-}`; document.head.appendChild(st); })();
-
-document.querySelectorAll("img.pops-logo").forEach(i=>i.src = POPS_LOGO);
-
-
+const REPORT_CSS = "\n.rp{font-family:'Montserrat',Arial,sans-serif;color:#1b3450;line-height:1.55;font-size:14px}\n.rp-cover{text-align:center;padding:6px 0 18px;border-bottom:4px solid #27b597;margin-bottom:18px}\n.rp-logo{width:100%;max-width:420px;border-radius:12px}\n.rp h1{color:#214a73;font-size:26px;margin:14px 0 4px}\n.rp-sub{color:#27b597;font-weight:700;margin:0}\n.rp h2{color:#214a73;font-size:20px;margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #d8e3ea}\n.rp h2::after{display:none}\n.rp h4{margin:0;color:#214a73;font-size:16px}\n.rp h5{margin:14px 0 6px;color:#214a73;font-size:13.5px}\n.rp p{margin:6px 0}\n.rp-table,.rp-key{width:100%;border-collapse:collapse;margin:8px 0}\n.rp-table th,.rp-table td{border:1px solid #d8e3ea;padding:7px 10px;text-align:left;vertical-align:top;font-size:13.5px}\n.rp-table th{background:#e8f7f3;color:#214a73;width:34%}\n.rp-key td{padding:4px 8px;font-size:13px}\n.rp-note{background:#fffbe0;border-left:5px solid #e0b800;padding:10px 12px;border-radius:8px}\n.rp-summary{background:#e8f7f3;border-left:5px solid #27b597;padding:12px 14px;border-radius:8px}\n.rp-glance{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}\n.rp-glance div{background:#fff;border:1px solid #d8e3ea;border-radius:10px;padding:10px;text-align:center;font-size:12px;color:#617486}\n.rp-num{display:block;font-size:26px;font-weight:800;color:#214a73}.rp-num small{font-size:13px;color:#617486}\n.rp-flags{background:#fdf0f0;border-left:5px solid #b54a4a;padding:10px 14px;border-radius:8px;margin:12px 0}\n.rp-flags h4{color:#b54a4a}\n.rp-domain{border:1px solid #d8e3ea;border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff;break-inside:avoid}\n.rp-dhead{display:flex;justify-content:space-between;align-items:center;gap:10px}\n.rp-badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}\n.lv-prominent{background:#214a73;color:#fff}.lv-substantial{background:#27b597;color:#fff}\n.lv-present{background:#fee000;color:#1b3450}.lv-limited{background:#e8eef2;color:#617486}\n.rp-bar{height:8px;background:#e8eef2;border-radius:10px;margin:10px 0 2px;overflow:hidden}\n.rp-bar div{height:100%;background:linear-gradient(90deg,#27b597,#214a73)}\n.rp-small{font-size:12px;color:#617486}\n.rp-chips{display:flex;flex-wrap:wrap;gap:6px}\n.rp-chips span{background:#eef3f7;border-radius:99px;padding:3px 10px;font-size:12.5px}\n.rp-green span{background:#e8f7f3;color:#1d6f5d}\n.rp-none{font-size:12.5px;color:#8a9aa8;font-style:italic}\n.rp-sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 16px}\n.rp-quote{font-style:italic;background:#f7fafb;border-left:4px solid #27b597;padding:8px 12px;border-radius:6px}\n.rp ul{padding-left:20px;margin:6px 0}.rp li{margin:3px 0}\n.rp-foot{margin-top:28px;padding-top:10px;border-top:2px solid #d8e3ea;font-size:11.5px;color:#617486;text-align:center}\n.rp-offscreen{position:absolute;left:-10000px;top:0;width:800px}\n.rp *{-webkit-print-color-adjust:exact;print-color-adjust:exact}\n@media screen and (max-width:600px){\n  .rp{font-size:16.5px;line-height:1.6}\n  .rp h1{font-size:25px}.rp h2{font-size:21px}.rp h4{font-size:18px}.rp h5{font-size:16.5px}\n  .rp-chips span{font-size:15px;padding:5px 11px}\n  .rp-small,.rp-none{font-size:14.5px}\n  .rp-badge{font-size:13.5px}\n  .rp-table th,.rp-table td,.rp-key td,.rp-resp th,.rp-resp td{font-size:15px}\n  .rp-foot {font-size:13.5px}\n}\n@media print{\n  @page{size:A4;margin:14mm 12mm}\n  .rp{font-size:11.5px}\n  .rp-logo{max-width:300px}\n  .rp h2{break-after:avoid;page-break-after:avoid}\n  .rp h4,.rp h5{break-after:avoid;page-break-after:avoid}\n  .rp-domain,.rp-sblock,.rp-glance,.rp-summary,.rp-flags,.rp-note,.rp-key,.rp-table,.rp-resp tr,.rp-quote{break-inside:avoid;page-break-inside:avoid}\n  .rp-domain{box-shadow:none}\n  .rp-sgrid{grid-template-columns:1fr 1fr}\n}\n";
+(function() {
+  const st = document.createElement("style");
+  st.textContent = REPORT_CSS + "\n.rp-resp{width:100%;border-collapse:collapse;margin:6px 0 14px}\n.rp-resp th,.rp-resp td{border:1px solid #d8e3ea;padding:6px 9px;text-align:left;vertical-align:top;font-size:12.5px}\n.rp-resp th{width:48%;background:#f7fafb;color:#214a73;font-weight:600}\n.rp-resp td.na{color:#8a9aa8;font-style:italic}\n@media print{\n  header,footer,main>section:not(.print-me){display:none!important}\n  main>section.print-me>*:not(.report-full){display:none!important}\n  main>section.print-me{border:0;box-shadow:none;padding:0;margin:0}\n  .report-full{border:0;padding:0}.report-full>h3,.report-full>p{display:none}\n  body{background:#fff}.rp-domain{break-inside:avoid}\n}";
+  document.head.appendChild(st);
+})();
+document.querySelectorAll("img.pops-logo").forEach((i) => i.src = POPS_LOGO);
 restoreAnswers();
 wireNavigation();
 setupLimits();
-
-/* ---------- PERMISSION GATE, EMAIL SYNC & SENDING ---------- */
-function syncEmails(src){
-  document.querySelectorAll('[data-key="yourEmail"]').forEach(el=>{ if(el!==src) el.value = src.value; });
+function syncEmails(src) {
+  document.querySelectorAll('[data-key="yourEmail"]').forEach((el) => {
+    if (el !== src) el.value = src.value;
+  });
 }
-function updateGate(){
+function updateGate() {
   const btn = document.getElementById("gateBtn");
-  if(btn) btn.disabled = !consentGiven();
+  if (btn) btn.disabled = !consentGiven();
 }
-document.querySelectorAll('[data-key="yourEmail"]').forEach(el=>{
-  el.addEventListener("input",()=>{ syncEmails(el); updateGate(); });
+document.querySelectorAll('[data-key="yourEmail"]').forEach((el) => {
+  el.addEventListener("input", () => {
+    syncEmails(el);
+    updateGate();
+  });
 });
-document.querySelectorAll(".consent").forEach(el=>el.addEventListener("change",updateGate));
-document.getElementById("gateBtn")?.addEventListener("click",()=>{
+document.querySelectorAll(".consent").forEach((el) => el.addEventListener("change", updateGate));
+(_b = document.getElementById("gateBtn")) == null ? void 0 : _b.addEventListener("click", () => {
   const err = document.getElementById("gateError");
-  if(!consentGiven()){
+  if (!consentGiven()) {
     err.textContent = "Please tick all four boxes and enter a valid email address.";
-    err.classList.remove("hidden"); return;
+    err.classList.remove("hidden");
+    return;
   }
   err.classList.add("hidden");
-  answers.consentTime = new Date().toLocaleString("en-GB",{dateStyle:"long",timeStyle:"short"});
+  answers.consentTime = (/* @__PURE__ */ new Date()).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" });
   collectAnswers();
   showPage(2);
 });
-document.getElementById("gateEmail")?.addEventListener("blur",e=>{
+(_c = document.getElementById("gateEmail")) == null ? void 0 : _c.addEventListener("blur", (e) => {
   const err = document.getElementById("gateError");
-  if(e.target.value && !validEmail(e.target.value)){ err.textContent="That email address does not look quite right – please check it."; err.classList.remove("hidden"); }
-  else err.classList.add("hidden");
+  if (e.target.value && !validEmail(e.target.value)) {
+    err.textContent = "That email address does not look quite right \u2013 please check it.";
+    err.classList.remove("hidden");
+  } else err.classList.add("hidden");
 });
-
-
-/* ---------- ALL RESPONSES (question by question) ---------- */
-function answerFor(field){
-  const out=[];
-  field.querySelectorAll("input,textarea,select").forEach(el=>{
-    if(el.readOnly || el.type==="file") return;
-    if(el.type==="radio"||el.type==="checkbox"){ if(el.checked) out.push((el.nextElementSibling&&el.nextElementSibling.textContent)||el.value); }
-    else if(el.value && el.value.trim()) out.push(el.value.trim());
+function answerFor(field) {
+  const out = [];
+  field.querySelectorAll("input,textarea,select").forEach((el) => {
+    if (el.readOnly || el.type === "file") return;
+    if (el.type === "radio" || el.type === "checkbox") {
+      if (el.checked) out.push(el.nextElementSibling && el.nextElementSibling.textContent || el.value);
+    } else if (el.value && el.value.trim()) out.push(el.value.trim());
   });
   return [...new Set(out)];
 }
-function buildResponsesHTML(num){
-  let html = `<h2>${num||9}. All responses (question by question)</h2><p>Every question in the questionnaire, with ${PARENT?"the parent/carer's":"the young person's"} answer exactly as given.</p>`;
-  pages.forEach((pg,i)=>{
-    if(i<=1 || i===total || roleHidden(i)) return;
-    const title = pg.querySelector("h2,h1")?.textContent || "Section";
-    const rows = [...pg.querySelectorAll(".field")].filter(f=>!(PARENT?f.closest(".yp-only"):f.closest(".parent-only"))).map(f=>{
-      const lab = f.querySelector("label.question"); if(!lab) return "";
-      const q = lab.cloneNode(true); q.querySelectorAll(".small").forEach(x=>x.remove());
+function buildResponsesHTML(num) {
+  let html = "<h2>".concat(num || 9, ". All responses (question by question)</h2><p>Every question in the questionnaire, with ").concat(PARENT ? "the parent/carer's" : "the young person's", " answer exactly as given.</p>");
+  pages.forEach((pg, i) => {
+    var _a2;
+    if (i <= 1 || i === total || roleHidden(i)) return;
+    const title = ((_a2 = pg.querySelector("h2,h1")) == null ? void 0 : _a2.textContent) || "Section";
+    const rows = [...pg.querySelectorAll(".field")].filter((f) => !(PARENT ? f.closest(".yp-only") : f.closest(".parent-only"))).map((f) => {
+      const lab = f.querySelector("label.question");
+      if (!lab) return "";
+      const q = lab.cloneNode(true);
+      q.querySelectorAll(".small").forEach((x) => x.remove());
       const a = answerFor(f);
-      return `<tr><th>${esc(q.textContent.trim())}</th>${a.length?`<td>${a.map(esc).join("; ")}</td>`:`<td class="na">Not answered</td>`}</tr>`;
+      return "<tr><th>".concat(esc(q.textContent.trim()), "</th>").concat(a.length ? "<td>".concat(a.map(esc).join("; "), "</td>") : '<td class="na">Not answered</td>', "</tr>");
     }).join("");
-    if(rows) html += `<h4 style="margin-top:14px">${esc(title)}</h4><table class="rp-resp">${rows}</table>`;
+    if (rows) html += '<h4 style="margin-top:14px">'.concat(esc(title), '</h4><table class="rp-resp">').concat(rows, "</table>");
   });
   return html;
 }
-
-/* ---------- PROGRESS: auto-save (JSON) + retrieve ---------- */
 const PROGRESS_KEY = "popsEbsna_progress_v3";
-function pkey(r){ return PROGRESS_KEY + "_" + (r||ROLE||"none"); }
-let emailSent = false, leavingForEmail = false;
-function progressData(){
-  return {app:"POPS-EBSNA-Teen", version:3, savedAt:new Date().toISOString(), page:current,
-          section: pages[current]?.querySelector("h2,h1")?.textContent || "", answers};
+function pkey(r) {
+  return PROGRESS_KEY + "_" + (r || ROLE || "none");
 }
-function saveProgress(){
+let emailSent = false, leavingForEmail = false;
+function progressData() {
+  var _a2, _b2;
+  return {
+    app: "POPS-EBSNA-Teen",
+    version: 3,
+    savedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    page: current,
+    section: ((_b2 = (_a2 = pages[current]) == null ? void 0 : _a2.querySelector("h2,h1")) == null ? void 0 : _b2.textContent) || "",
+    answers
+  };
+}
+function saveProgress() {
   const data = progressData();
-  if(ROLE){ try { localStorage.setItem(pkey(), JSON.stringify(data)); } catch(e) {} }
+  if (ROLE) {
+    try {
+      localStorage.setItem(pkey(), JSON.stringify(data));
+    } catch (e) {
+    }
+  }
   const note = document.getElementById("saveNote");
-  if(note) note.textContent = "✓ Progress saved " + new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  if (note) note.textContent = "\u2713 Progress saved " + (/* @__PURE__ */ new Date()).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   return data;
 }
-function safeName(){ return (answers.name||"Pupil").replace(/[^a-z0-9_-]+/gi,"_"); }
-function dateStamp(){ return new Date().toISOString().slice(0,10); }
-function downloadBlob(content, type, filename){
-  const blob = content instanceof Blob ? content : new Blob([content],{type});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+function safeName() {
+  return (answers.name || "Pupil").replace(/[^a-z0-9_-]+/gi, "_");
 }
-function progressJSON(){ collectAnswers(); return JSON.stringify(saveProgress(), null, 2); }
-function jsonFileName(){ return `My_School_Voice_${PARENT?"Parent_":""}Progress_${safeName()}_${dateStamp()}.json`; }
-function reportFileName(){ return `My_School_Voice_${PARENT?"Parent_":""}${safeName()}_${dateStamp()}.html`; }
-
-function applyLoaded(data){
-  if(!data || typeof data!=="object" || !data.answers || typeof data.answers!=="object") throw new Error("bad");
+function dateStamp() {
+  return (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+}
+function downloadBlob(content, type, filename) {
+  const blob = content instanceof Blob ? content : new Blob([content], { type });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2e3);
+}
+function progressJSON() {
+  collectAnswers();
+  return JSON.stringify(saveProgress(), null, 2);
+}
+function jsonFileName() {
+  return "My_School_Voice_".concat(PARENT ? "Parent_" : "", "Progress_").concat(safeName(), "_").concat(dateStamp(), ".json");
+}
+function reportFileName() {
+  return "My_School_Voice_".concat(PARENT ? "Parent_" : "").concat(safeName(), "_").concat(dateStamp(), ".html");
+}
+function applyLoaded(data) {
+  if (!data || typeof data !== "object" || !data.answers || typeof data.answers !== "object") throw new Error("bad");
   setRole(data.answers.role === "parent" ? "parent" : "yp", true);
-  answers = data.answers; answers.role = ROLE;
-  try { localStorage.setItem(skey(), JSON.stringify(answers)); } catch(e) {}
+  answers = data.answers;
+  answers.role = ROLE;
+  try {
+    localStorage.setItem(skey(), JSON.stringify(answers));
+  } catch (e) {
+  }
   restoreAnswers();
-  const ge=document.getElementById("gateEmail"); if(ge) syncEmails(ge);
+  const ge = document.getElementById("gateEmail");
+  if (ge) syncEmails(ge);
   updateGate();
-  showPage(Number(data.page)||2);
+  showPage(Number(data.page) || 2);
 }
-function parseSaved(text){
+function parseSaved(text) {
   const t = text.trim();
-  if(t.startsWith("{")) return JSON.parse(t);
+  if (t.startsWith("{")) return JSON.parse(t);
   const m = t.match(/<script[^>]*id="pops-data"[^>]*>([\s\S]*?)<\/script>/);
-  if(m) return JSON.parse(m[1].replace(/\\u003c/g,"<"));
+  if (m) return JSON.parse(m[1].replace(/\\u003c/g, "<"));
   throw new Error("no data");
 }
-document.getElementById("saveFileBtn")?.addEventListener("click",()=>downloadBlob(progressJSON(),"application/json",jsonFileName()));
-document.getElementById("loadFile")?.addEventListener("change",async e=>{
-  const file=e.target.files[0], err=document.getElementById("loadError");
-  if(!file) return;
-  try { applyLoaded(parseSaved(await file.text())); err.classList.add("hidden"); }
-  catch(x){ err.textContent="Sorry, that file could not be loaded. Please choose a POPS progress file (.json) or report file (.html)."; err.classList.remove("hidden"); }
-  e.target.value="";
+(_d = document.getElementById("saveFileBtn")) == null ? void 0 : _d.addEventListener("click", () => downloadBlob(progressJSON(), "application/json", jsonFileName()));
+(_e = document.getElementById("loadFile")) == null ? void 0 : _e.addEventListener("change", async (e) => {
+  const file = e.target.files[0], err = document.getElementById("loadError");
+  if (!file) return;
+  try {
+    applyLoaded(parseSaved(await file.text()));
+    err.classList.add("hidden");
+  } catch (x) {
+    err.textContent = "Sorry, that file could not be loaded. Please choose a POPS progress file (.json) or report file (.html).";
+    err.classList.remove("hidden");
+  }
+  e.target.value = "";
 });
-(function offerResume(){
-  const box=document.getElementById("resumeBox"), nav=box.querySelector(".nav"); nav.innerHTML="";
-  const lines=[];
-  [["yp","young person's questionnaire"],["parent","parent/carer questionnaire"]].forEach(([r,label])=>{
-    let data=null; try{ data=JSON.parse(localStorage.getItem(pkey(r))||"null"); }catch(e){}
-    if(!data || !data.answers || !(data.page>1)) return;
-    const when=new Date(data.savedAt).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"});
-    const who=data.answers.name?` for ${data.answers.name}`:"";
-    lines.push(`A ${label}${esc(who)} was saved on this device on ${when}.`);
-    const go=document.createElement("button"); go.className="teal"; go.textContent=`Continue the ${label} →`;
-    go.onclick=()=>applyLoaded(data); nav.appendChild(go);
-    const del=document.createElement("button"); del.className="secondary"; del.textContent=`Delete it and start again`;
-    del.onclick=()=>{ try{ localStorage.removeItem(pkey(r)); localStorage.removeItem(skey(r)); }catch(e){} leavingForEmail=true; location.reload(); };
+(function offerResume() {
+  const box = document.getElementById("resumeBox"), nav = box.querySelector(".nav");
+  nav.innerHTML = "";
+  const lines = [];
+  [["yp", "young person's questionnaire"], ["parent", "parent/carer questionnaire"]].forEach(([r, label]) => {
+    let data = null;
+    try {
+      data = JSON.parse(localStorage.getItem(pkey(r)) || "null");
+    } catch (e) {
+    }
+    if (!data || !data.answers || !(data.page > 1)) return;
+    const when = new Date(data.savedAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+    const who = data.answers.name ? " for ".concat(data.answers.name) : "";
+    lines.push("A ".concat(label).concat(esc(who), " was saved on this device on ").concat(when, "."));
+    const go = document.createElement("button");
+    go.className = "teal";
+    go.textContent = "Continue the ".concat(label, " \u2192");
+    go.onclick = () => applyLoaded(data);
+    nav.appendChild(go);
+    const del = document.createElement("button");
+    del.className = "secondary";
+    del.textContent = "Delete it and start again";
+    del.onclick = () => {
+      try {
+        localStorage.removeItem(pkey(r));
+        localStorage.removeItem(skey(r));
+      } catch (e) {
+      }
+      leavingForEmail = true;
+      location.reload();
+    };
     nav.appendChild(del);
   });
-  if(!lines.length) return;
+  if (!lines.length) return;
   document.getElementById("resumeText").innerHTML = lines.join("<br>");
   box.classList.remove("hidden");
 })();
-
-/* ---------- AUTOMATIC SENDING (optional) ----------
-   Paste the web-app URL of the POPS Google Apps Script between the quotes below
-   to send reports automatically to popsukoffice@gmail.com with one click.
-   Leave it empty ("") to use the email-app method instead. */
-const SEND_ENDPOINT = "https://script.google.com/macros/s/AKfycbxJvXEy7ksQP5lfDze0xx8UOCpURsm5OuNdrFdQ4JBe9-NabyMTwnxy17JmWWyOihHYPA/exec";
-
-/* ---------- REPORT FILE, EMAIL, SHARE, PRINT ---------- */
-function reportFileHTML(){
-  const data = JSON.stringify(saveProgress()).replace(/</g,"\\u003c");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My School Voice${PARENT?" – Parent/Carer View":""} – ${esc(answers.name||"Young person")}</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet"><style>body{margin:0;background:#f2f7f8}.wrap{max-width:860px;margin:24px auto;background:#fff;padding:28px 32px;border-radius:14px}@media print{body{background:#fff}.wrap{margin:0;padding:0}}${REPORT_CSS}</style></head><body><div class="wrap">${buildReportHTML()}</div><script type="application/json" id="pops-data">${data}<\/script></body></html>`;
+const SEND_ENDPOINT = "https://script.google.com/macros/s/AKfycbwHuAtuOYedaOdjStbHpW6SX91PmmEKTgD30dlCs11Tb5XYB4LI-C6FEZ55RETprlpg3Q/exec";
+function reportFileHTML() {
+  const data = JSON.stringify(saveProgress()).replace(/</g, "\\u003c");
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My School Voice'.concat(PARENT ? " \u2013 Parent/Carer View" : "", " \u2013 ").concat(esc(answers.name || "Young person"), '</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet"><style>body{margin:0;background:#f2f7f8}.wrap{max-width:860px;margin:24px auto;background:#fff;padding:28px 32px;border-radius:14px}@media print{body{background:#fff}.wrap{margin:0;padding:0}}').concat(REPORT_CSS, '</style></head><body><div class="wrap">').concat(buildReportHTML(), '</div><script type="application/json" id="pops-data">').concat(data, "<\/script></body></html>");
 }
-let reportDownloaded=false;
-function checkEmail(){
-  const err=document.getElementById("sendError"), email=document.getElementById("finalEmail").value;
-  if(!validEmail(email)){ err.textContent="Please enter your email address above first."; err.classList.remove("hidden"); return null; }
-  err.classList.add("hidden"); syncEmails(document.getElementById("finalEmail")); collectAnswers(); return email;
+let reportDownloaded = false;
+function checkEmail() {
+  const err = document.getElementById("sendError"), email = document.getElementById("finalEmail").value;
+  if (!validEmail(email)) {
+    err.textContent = "Please enter your email address above first.";
+    err.classList.remove("hidden");
+    return null;
+  }
+  err.classList.add("hidden");
+  syncEmails(document.getElementById("finalEmail"));
+  collectAnswers();
+  return email;
 }
-document.getElementById("downloadBtn")?.addEventListener("click",()=>{
-  if(!checkEmail()) return;
-  downloadBlob(reportFileHTML(),"text/html;charset=utf-8",reportFileName());
-  reportDownloaded=true;
-  const b=document.getElementById("downloadBtn"); b.textContent="✓ Report file downloaded";
+(_f = document.getElementById("downloadBtn")) == null ? void 0 : _f.addEventListener("click", () => {
+  if (!checkEmail()) return;
+  downloadBlob(reportFileHTML(), "text/html;charset=utf-8", reportFileName());
+  reportDownloaded = true;
+  const b = document.getElementById("downloadBtn");
+  b.textContent = "\u2713 Report file downloaded";
 });
-function markSent(){
-  emailSent=true;
-  const k=document.getElementById("keepOpen"); k.classList.add("done");
-  k.innerHTML="✓ <strong>Thank you!</strong> Your answers have been sent. You can now close this page.";
+function markSent() {
+  emailSent = true;
+  const k = document.getElementById("keepOpen");
+  k.classList.add("done");
+  k.innerHTML = "\u2713 <strong>Thank you!</strong> Your answers have been sent. You can now close this page.";
   document.getElementById("finalWarning").classList.add("hidden");
 }
-function showStatus(html, ok){
-  const st=document.getElementById("sendStatus"); st.innerHTML=html; st.classList.remove("hidden"); st.classList.toggle("ok",!!ok);
+function showStatus(html, ok) {
+  const st = document.getElementById("sendStatus");
+  st.innerHTML = html;
+  st.classList.remove("hidden");
+  st.classList.toggle("ok", !!ok);
 }
-let lastCopySent=null;
-async function sendAutomatically(email){
-  const child=(answers.name||"Young person").trim();
-  const payload={app:"POPS-EBSNA-Teen", sendCopy:true, role:ROLE, name:answers.name||"", email,
-    respondent: PARENT ? `${answers.parentName||"Parent/carer"}${answers.relationship?" ("+answers.relationship.toLowerCase()+")":" (parent/carer)"}` : "Young person",
-    respondentName: PARENT ? (answers.parentName||"") : (answers.name||""),
-    subject: PARENT ? `My School Voice – Parent/carer view – ${child}` : `My School Voice – ${child}`,
-    fileName:reportFileName(), jsonName:jsonFileName(), reportHtml:reportFileHTML(), reportText:makeReportText(), dataJson:progressJSON()};
-  const opts={method:"POST", body:JSON.stringify(payload), headers:{"Content-Type":"text/plain;charset=utf-8"}};
-  try{
-    const r=await fetch(SEND_ENDPOINT,opts); const j=await r.json(); lastCopySent=j&&j.copySent; return !!(j&&j.ok);
-  }catch(e){
-    try{ await fetch(SEND_ENDPOINT,{...opts,mode:"no-cors"}); return true; }catch(e2){ return false; }
+let lastCopySent = null, lastSendError = "";
+async function sendAutomatically(email) {
+  const child = (answers.name || "Young person").trim();
+  const payload = {
+    app: "POPS-EBSNA-Teen",
+    sendCopy: true,
+    role: ROLE,
+    name: answers.name || "",
+    email,
+    respondent: PARENT ? "".concat(answers.parentName || "Parent/carer").concat(answers.relationship ? " (" + answers.relationship.toLowerCase() + ")" : " (parent/carer)") : "Young person",
+    respondentName: PARENT ? answers.parentName || "" : answers.name || "",
+    subject: PARENT ? "My School Voice \u2013 Parent/carer view \u2013 ".concat(child) : "My School Voice \u2013 ".concat(child),
+    fileName: reportFileName(),
+    jsonName: jsonFileName(),
+    reportHtml: reportFileHTML(),
+    reportText: makeReportText(),
+    dataJson: progressJSON()
+  };
+  const opts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" } };
+  try {
+    const r = await fetch(SEND_ENDPOINT, opts);
+    if (!r.ok) {
+      lastSendError = "the sending service replied with error " + r.status;
+      return false;
+    }
+    const j = await r.json();
+    lastCopySent = j && j.copySent;
+    if (!(j && j.ok)) lastSendError = j && j.message || "no confirmation received";
+    return !!(j && j.ok);
+  } catch (e) {
+    lastSendError = "the sending service could not be reached";
+    return false;
   }
 }
-function sendViaEmailApp(email){
-  downloadBlob(reportFileHTML(),"text/html;charset=utf-8",reportFileName());
-  const text=makeReportText();
-  try{ navigator.clipboard.writeText(text).catch(()=>{}); }catch(e){}
-  const who=(answers.name||"Young person").trim();
-  const body = PARENT
-    ? `Dear Educational Psychologist,\n\nHere is my My School Voice parent/carer questionnaire about ${who}, with all my answers.\n\nMy name: ${answers.parentName||""}\nMy email: ${email}\n\n${text}`
-    : `Dear Educational Psychologist,\n\nHere is my My School Voice report with all my answers.\n\nMy email: ${email}\n\n${text}`;
-  leavingForEmail=true;
-  window.location.href=`mailto:popsUKoffice@gmail.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent((PARENT?"My School Voice – Parent/carer view – ":"My School Voice – ")+who)}&body=${encodeURIComponent(body)}`;
-  setTimeout(()=>leavingForEmail=false,1500);
-  showStatus(`<strong>Your email is ready.</strong> It is going to popsUKoffice@gmail.com, with a copy to you. Just press <strong>Send</strong>.<br><span class="small">If you can, also attach the report file that has just downloaded. If the message is empty, click in it and paste (Ctrl+V / ⌘+V).</span>`);
+function sendViaEmailApp(email) {
+  downloadBlob(reportFileHTML(), "text/html;charset=utf-8", reportFileName());
+  const text = makeReportText();
+  try {
+    navigator.clipboard.writeText(text).catch(() => {
+    });
+  } catch (e) {
+  }
+  const who = (answers.name || "Young person").trim();
+  const body = PARENT ? "Dear Educational Psychologist,\n\nHere is my My School Voice parent/carer questionnaire about ".concat(who, ", with all my answers.\n\nMy name: ").concat(answers.parentName || "", "\nMy email: ").concat(email, "\n\n").concat(text) : "Dear Educational Psychologist,\n\nHere is my My School Voice report with all my answers.\n\nMy email: ".concat(email, "\n\n").concat(text);
+  leavingForEmail = true;
+  window.location.href = "mailto:popsUKoffice@gmail.com?cc=".concat(encodeURIComponent(email), "&subject=").concat(encodeURIComponent((PARENT ? "My School Voice \u2013 Parent/carer view \u2013 " : "My School Voice \u2013 ") + who), "&body=").concat(encodeURIComponent(body));
+  setTimeout(() => leavingForEmail = false, 1500);
+  showStatus('<strong>Your email is ready.</strong> It is going to popsUKoffice@gmail.com, with a copy to you. Just press <strong>Send</strong>.<br><span class="small">If you can, also attach the report file that has just downloaded. If the message is empty, click in it and paste (Ctrl+V / \u2318+V).</span>');
   document.getElementById("manualConfirm").classList.remove("hidden");
 }
-document.getElementById("sendBtn")?.addEventListener("click",async()=>{
-  const email=checkEmail(); if(!email) return;
-  const btn=document.getElementById("sendBtn");
-  if(SEND_ENDPOINT){
-    btn.disabled=true; btn.textContent="Sending…";
-    const ok=await sendAutomatically(email);
-    if(ok){ btn.textContent="✓ Sent"; showStatus(`🎉 Your answers have been sent to the Educational Psychologist.<br>${lastCopySent===false?"We could not send a copy to your email this time, but your answers did reach the Educational Psychologist.":`A copy has also been sent to <strong>${esc(email)}</strong> (check your junk folder if you cannot see it).`}<br>Thank you! You can now close this page.`,true); markSent(); return; }
-    btn.disabled=false; btn.textContent="📨 Send to my Educational Psychologist";
-    showStatus("Sorry, it could not be sent automatically (you may be offline). Your email app will open instead.");
+(_g = document.getElementById("sendBtn")) == null ? void 0 : _g.addEventListener("click", async () => {
+  const email = checkEmail();
+  if (!email) return;
+  const btn = document.getElementById("sendBtn");
+  if (SEND_ENDPOINT) {
+    btn.disabled = true;
+    btn.textContent = "Sending\u2026";
+    const ok = await sendAutomatically(email);
+    if (ok) {
+      btn.textContent = "\u2713 Sent";
+      showStatus("\u{1F389} Your answers have been sent to the Educational Psychologist.<br>".concat(lastCopySent === false ? "We could not send a copy to your email this time, but your answers did reach the Educational Psychologist." : "A copy has also been sent to <strong>".concat(esc(email), "</strong> (check your junk folder if you cannot see it)."), "<br>Thank you! You can now close this page."), true);
+      markSent();
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = "\u{1F4E8} Send to my Educational Psychologist";
   }
   sendViaEmailApp(email);
+  if (SEND_ENDPOINT) document.getElementById("sendStatus").innerHTML += '<br><span class="small">Automatic sending did not work this time ('.concat(esc(lastSendError || "unknown reason"), "), so your email app has opened instead.</span>");
 });
-(function setupShare(){
-  const btn=document.getElementById("shareBtn");
-  try{
-    const test=new File(["x"],"t.html",{type:"text/html"});
-    if(!(navigator.canShare && navigator.canShare({files:[test]}))) return;
-  }catch(e){ return; }
+(function setupShare() {
+  const btn = document.getElementById("shareBtn");
+  try {
+    const test = new File(["x"], "t.html", { type: "text/html" });
+    if (!(navigator.canShare && navigator.canShare({ files: [test] }))) return;
+  } catch (e) {
+    return;
+  }
   btn.classList.remove("hidden");
-  btn.addEventListener("click",async()=>{
-    if(!checkEmail()) return;
-    const files=[new File([reportFileHTML()],reportFileName(),{type:"text/html"}), new File([progressJSON()],jsonFileName(),{type:"application/json"})];
-    try{ await navigator.share({title:"My School Voice", text:`Please send to popsUKoffice@gmail.com – questionnaire report for ${answers.name||"a young person"}.`, files}); }catch(e){}
+  btn.addEventListener("click", async () => {
+    if (!checkEmail()) return;
+    const files = [new File([reportFileHTML()], reportFileName(), { type: "text/html" }), new File([progressJSON()], jsonFileName(), { type: "application/json" })];
+    try {
+      await navigator.share({ title: "My School Voice", text: "Please send to popsUKoffice@gmail.com \u2013 questionnaire report for ".concat(answers.name || "a young person", "."), files });
+    } catch (e) {
+    }
   });
 })();
-function printReport(){
+function printReport() {
   collectAnswers();
-  const html = reportFileHTML().replace('</head>','<style>@media print{body{background:#fff!important}.wrap{max-width:none!important;margin:0!important;padding:0!important;border-radius:0!important}}</style></head>');
-  let fr=document.getElementById("printFrame"); if(fr) fr.remove();
-  fr=document.createElement("iframe"); fr.id="printFrame";
-  fr.setAttribute("aria-hidden","true");
-  fr.style.cssText="position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden";
+  const html = reportFileHTML().replace("</head>", "<style>@media print{body{background:#fff!important}.wrap{max-width:none!important;margin:0!important;padding:0!important;border-radius:0!important}}</style></head>");
+  let fr = document.getElementById("printFrame");
+  if (fr) fr.remove();
+  fr = document.createElement("iframe");
+  fr.id = "printFrame";
+  fr.setAttribute("aria-hidden", "true");
+  fr.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden";
   document.body.appendChild(fr);
-  const doc=fr.contentWindow.document; doc.open(); doc.write(html); doc.close();
-  const go=()=>{ try{ fr.contentWindow.focus(); fr.contentWindow.print(); }
-    catch(e){ const w=window.open("","_blank"); if(w){ w.document.write(html); w.document.close(); setTimeout(()=>w.print(),600); } } };
-  const img=doc.querySelector("img");
-  const ready=()=>setTimeout(go,300);
-  if(img && !img.complete){ img.onload=ready; img.onerror=ready; } else ready();
+  const doc = fr.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
+  const go = () => {
+    try {
+      fr.contentWindow.focus();
+      fr.contentWindow.print();
+    } catch (e) {
+      const w = window.open("", "_blank");
+      if (w) {
+        w.document.write(html);
+        w.document.close();
+        setTimeout(() => w.print(), 600);
+      }
+    }
+  };
+  const img = doc.querySelector("img");
+  const ready = () => setTimeout(go, 300);
+  if (img && !img.complete) {
+    img.onload = ready;
+    img.onerror = ready;
+  } else ready();
 }
-document.getElementById("printBtn")?.addEventListener("click",printReport);
-document.getElementById("sentConfirm")?.addEventListener("change",e=>{
-  if(e.target.checked){ markSent(); showStatus("🎉 Thank you! You can now close this page.",true); }
+(_h = document.getElementById("printBtn")) == null ? void 0 : _h.addEventListener("click", printReport);
+(_i = document.getElementById("sentConfirm")) == null ? void 0 : _i.addEventListener("change", (e) => {
+  if (e.target.checked) {
+    markSent();
+    showStatus("\u{1F389} Thank you! You can now close this page.", true);
+  }
 });
-window.addEventListener("beforeunload",e=>{
-  if(emailSent || leavingForEmail) return;
-  if(Object.keys(answers).length){ e.preventDefault(); e.returnValue=""; }
+window.addEventListener("beforeunload", (e) => {
+  if (emailSent || leavingForEmail) return;
+  if (Object.keys(answers).length) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
 });
-
-
-/* ---------- ROLE: young person / parent-carer ---------- */
-const QUOTE_GROUPS = new Set(["socialThoughts","workWorries","peopleDifficult"]);
-const KEEP = new Set([RNS,"I do not know","I do not know yet","I am not sure","I am not sure yet","Not sure","Something else","I cannot think of a time yet","I would rather talk about this privately","Nothing yet","None of these"]);
-function third(s){
-  if(KEEP.has(s)) return s;
-  return s.replace(/^I am\b/,"They are").replace(/^I'm\b/,"They're").replace(/^I was\b/,"They were").replace(/^I\b/,"They")
-    .replace(/\bI am\b/g,"they are").replace(/\bI\b/g,"they")
-    .replace(/\bMy\b/g,"Their").replace(/\bmy\b/g,"their").replace(/\bmyself\b/g,"themselves").replace(/\bMe\b/g,"Them").replace(/\bme\b/g,"them");
+const QUOTE_GROUPS = /* @__PURE__ */ new Set(["socialThoughts", "workWorries", "peopleDifficult"]);
+const KEEP = /* @__PURE__ */ new Set([RNS, "I do not know", "I do not know yet", "I am not sure", "I am not sure yet", "Not sure", "Something else", "I cannot think of a time yet", "I would rather talk about this privately", "Nothing yet", "None of these"]);
+function third(s) {
+  if (KEEP.has(s)) return s;
+  return s.replace(/^I am\b/, "They are").replace(/^I'm\b/, "They're").replace(/^I was\b/, "They were").replace(/^I\b/, "They").replace(/\bI am\b/g, "they are").replace(/\bI'm\b/g, "they're").replace(/\bI\b/g, "they").replace(/\bMy\b/g, "Their").replace(/\bmy\b/g, "their").replace(/\bmyself\b/g, "themselves").replace(/\bMe\b/g, "Them").replace(/\bme\b/g, "them");
 }
-function optLabel(group, v){
-  if(!PARENT || v==null) return v;
-  if(QUOTE_GROUPS.has(group)) return KEEP.has(v) ? v : `“${v}”`;
+function optLabel(group, v) {
+  if (!PARENT || v == null) return v;
+  if (QUOTE_GROUPS.has(group)) return KEEP.has(v) ? v : "\u201C".concat(v, "\u201D");
   return third(String(v));
 }
 const GROUP_OF = {};
-Object.entries(checkboxOptions).forEach(([g,opts])=>opts.forEach(v=>{ if(!(v in GROUP_OF)) GROUP_OF[v]=g; }));
-function optLabelAny(v){ return optLabel(GROUP_OF[v], v); }
-
-function applyRoleText(){
+Object.entries(checkboxOptions).forEach(([g, opts]) => opts.forEach((v) => {
+  if (!(v in GROUP_OF)) GROUP_OF[v] = g;
+}));
+function optLabelAny(v) {
+  return optLabel(GROUP_OF[v], v);
+}
+function applyRoleText() {
   document.body.classList.toggle("role-parent", PARENT);
-  document.querySelectorAll("[data-p]").forEach(el=>{
-    if(el.dataset.y===undefined) el.dataset.y = el.innerHTML;
+  document.querySelectorAll("[data-p]").forEach((el) => {
+    if (el.dataset.y === void 0) el.dataset.y = el.innerHTML;
     el.innerHTML = PARENT ? el.dataset.p : el.dataset.y;
   });
-  document.querySelectorAll(".page .choice input").forEach(inp=>{
-    if(inp.classList.contains("consent") || inp.id==="sentConfirm") return;
-    const sp = inp.nextElementSibling; if(!sp) return;
-    if(sp.dataset.y===undefined) sp.dataset.y = sp.textContent;
+  document.querySelectorAll(".page .choice input").forEach((inp) => {
+    if (inp.classList.contains("consent") || inp.id === "sentConfirm") return;
+    const sp = inp.nextElementSibling;
+    if (!sp) return;
+    if (sp.dataset.y === void 0) sp.dataset.y = sp.textContent;
     const g = inp.dataset.group || inp.dataset.key || inp.name;
     sp.textContent = PARENT ? optLabel(g, sp.dataset.y) : sp.dataset.y;
   });
-  /* number the question sections for this role */
   let num = 0;
-  pages.forEach((p,i)=>{
-    const h = p.querySelector("h2"); if(!h || i===total) return;
-    if(roleHidden(i)) return;
-    if(h.dataset.base===undefined) h.dataset.base = h.innerHTML;
-    const base = PARENT && h.dataset.p ? h.dataset.p : (h.dataset.y!==undefined ? h.dataset.y : h.dataset.base);
-    h.innerHTML = `${++num}. ${base}`;
+  pages.forEach((p, i) => {
+    const h = p.querySelector("h2");
+    if (!h || i === total) return;
+    if (roleHidden(i)) return;
+    if (h.dataset.base === void 0) h.dataset.base = h.innerHTML;
+    const base = PARENT && h.dataset.p ? h.dataset.p : h.dataset.y !== void 0 ? h.dataset.y : h.dataset.base;
+    h.innerHTML = "".concat(++num, ". ").concat(base);
   });
-  document.getElementById("brandSub").textContent = PARENT ? "Psychology Service · My School Voice – Parent/Carer" : "Psychology Service · My School Voice";
-  document.title = PARENT ? "My School Voice (Parent/Carer) – Positive Outcomes Psychology Service" : "My School Voice – Positive Outcomes Psychology Service";
+  document.getElementById("brandSub").textContent = PARENT ? "Psychology Service \xB7 My School Voice \u2013 Parent/Carer" : "Psychology Service \xB7 My School Voice";
+  document.title = PARENT ? "My School Voice (Parent/Carer) \u2013 Positive Outcomes Psychology Service" : "My School Voice \u2013 Positive Outcomes Psychology Service";
 }
-function setRole(r, skipLoad){
-  ROLE = r; PARENT = (r === "parent");
+function setRole(r, skipLoad) {
+  ROLE = r;
+  PARENT = r === "parent";
   applyRoleText();
-  document.querySelectorAll(".page input:not([readonly]):not([type=file]), .page textarea").forEach(el=>{
-    if(el.type==="radio"||el.type==="checkbox") el.checked=false; else el.value="";
+  document.querySelectorAll(".page input:not([readonly]):not([type=file]), .page textarea").forEach((el) => {
+    if (el.type === "radio" || el.type === "checkbox") el.checked = false;
+    else el.value = "";
   });
-  if(!skipLoad){
-    try { answers = JSON.parse(localStorage.getItem(skey()) || "{}") || {}; } catch(e) { answers = {}; }
+  if (!skipLoad) {
+    try {
+      answers = JSON.parse(localStorage.getItem(skey()) || "{}") || {};
+    } catch (e) {
+      answers = {};
+    }
     answers.role = ROLE;
     restoreAnswers();
-    const ge=document.getElementById("gateEmail"); if(ge) syncEmails(ge);
+    const ge = document.getElementById("gateEmail");
+    if (ge) syncEmails(ge);
     updateGate();
   }
 }
-document.querySelectorAll(".role-card").forEach(btn=>btn.addEventListener("click",()=>{ setRole(btn.dataset.role); showPage(1); }));
-
-const yr = document.getElementById("yr"); if(yr) yr.textContent = new Date().getFullYear();
-
+document.querySelectorAll(".role-card").forEach((btn) => btn.addEventListener("click", () => {
+  setRole(btn.dataset.role);
+  showPage(1);
+}));
+const yr = document.getElementById("yr");
+if (yr) yr.textContent = (/* @__PURE__ */ new Date()).getFullYear();
 updateGate();
 showPage(0);
 </script>
